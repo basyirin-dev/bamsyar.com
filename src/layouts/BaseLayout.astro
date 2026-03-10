@@ -1,0 +1,42 @@
+---
+import '../styles/global.css';
+import 'katex/dist/katex.min.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = 'Research notes on AI systems, schema coherence, and physics-informed machine learning.' } = Astro.props;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+  </head>
+  <body class="bg-[#0f0f0f] text-gray-200 min-h-screen">
+    <header class="border-b border-gray-800 px-6 py-4">
+      <nav class="max-w-3xl mx-auto flex gap-6 text-sm">
+        <a href="/" class="text-white font-semibold">Basyirin Amsyar</a>
+        <a href="/articles" class="text-gray-400 hover:text-white">Articles</a>
+        <a href="/about" class="text-gray-400 hover:text-white">About</a>
+      </nav>
+    </header>
+    <main class="max-w-3xl mx-auto px-6 py-12">
+      <slot />
+    </main>
+    <footer class="border-t border-gray-800 px-6 py-6 mt-12">
+      <div class="max-w-3xl mx-auto text-sm text-gray-500">
+        © {new Date().getFullYear()} Basyirin Amsyar ·
+        <a href="https://github.com/YOURUSERNAME" class="hover:text-gray-300">GitHub</a>
+      </div>
+    </footer>
+  </body>
+</html>
