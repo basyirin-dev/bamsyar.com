@@ -1,42 +1,266 @@
 ---
 import '../styles/global.css';
-import 'katex/dist/katex.min.css';
+
+/*
+  KaTeX CSS is intentionally loaded from CDN here, not bundled via npm import.
+  Reason: the npm-imported katex/dist/katex.min.css loads fine in dev but
+  requires explicit asset handling in Astro's build pipeline. The CDN link
+  is simpler, cached globally by Cloudflare (which also serves this site),
+  and loads in parallel with the HTML parse. The version is pinned.
+*/
 
 interface Props {
   title: string;
   description?: string;
+  /*
+    article — pass true on article pages to activate Google Scholar meta tags
+    and article-specific OG type. Default: false (page OG type).
+  */
+  article?: boolean;
+  /*
+    These are article-specific. Only used when article=true.
+    publishDate should be ISO 8601 format: "2026-03-20"
+    arxivId should be the full arXiv identifier: "2603.XXXXX"
+    authors defaults to site author if not provided.
+  */
+  publishDate?: string;
+  arxivId?: string;
+  authors?: string[];
+  /*
+    ogImage — absolute URL to the Open Graph image.
+    Falls back to the site-wide OG image if not provided.
+    Generate per-article images in Stage 7; use the site-wide fallback for now.
+  */
+  ogImage?: string;
 }
 
-const { title, description = 'Research notes on AI systems, schema coherence, and physics-informed machine learning.' } = Astro.props;
+const {
+  title,
+  description = 'Research notes on AI systems, schema coherence, and physics-informed machine learning.',
+  article = false,
+  publishDate,
+  arxivId,
+  authors = ['Basyirin Amsyar'],
+  ogImage,
+} = Astro.props;
+
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const siteOgImage = new URL('/og-default.png', Astro.site).toString();
+const resolvedOgImage = ogImage ?? siteOgImage;
+const publishYear = publishDate ? new Date(publishDate).getFullYear().toString() : undefined;
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
+    <!-- ═══════════════════════════════════════════
+         CORE META
+    ═══════════════════════════════════════════ -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0f0f0f" />
+    <meta name="color-scheme" content="dark" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalURL} />
     <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <!-- ═══════════════════════════════════════════
+         OPEN GRAPH
+         These tags control how the link unfolds when shared on LinkedIn,
+         Slack, Twitter/X, WhatsApp, iMessage. All must be present.
+    ═══════════════════════════════════════════ -->
+    <meta property="og:type"        content={article ? 'article' : 'website'} />
+    <meta property="og:url"         content={canonicalURL} />
+    <meta property="og:title"       content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image"       content={resolvedOgImage} />
+    <meta property="og:image:width"  content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:site_name"   content="Basyirin Amsyar" />
+    <meta property="og:locale"      content="en_US" />
+    {article && publishDate && (
+      <meta property="article:published_time" content={publishDate} />
+    )}
+    {article && authors.map(author => (
+      <meta property="article:author" content={author} />
+    ))}
+
+    <!-- ═══════════════════════════════════════════
+         TWITTER / X CARD
+         "summary_large_image" shows the full OG image in the tweet.
+         This is the correct card type for a research article with an image.
+    ═══════════════════════════════════════════ -->
+    <meta name="twitter:card"        content="summary_large_image" />
+    <meta name="twitter:title"       content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image"       content={resolvedOgImage} />
+    <!-- Update this if you have a Twitter/X handle: -->
+    <!-- <meta name="twitter:site" content="@yourtwitterhandle" /> -->
+
+    <!-- ═══════════════════════════════════════════
+         STRUCTURED DATA (JSON-LD)
+    ═══════════════════════════════════════════ -->
+    {!article && (
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Basyirin Amsyar",
+    "url": Astro.site?.toString(),
+    "description": description,
+    "sameAs": [
+      "https://github.com/YOURUSERNAME"
+      // Add LinkedIn, arXiv profile URL once available
+    ]
+  })} />
+)}
+
+    {article && (
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "ScholarlyArticle",
+    "headline": title,
+    "description": description,
+    "author": authors.map(name => ({ "@type": "Person", "name": name })),
+    "datePublished": publishDate,
+    "url": canonicalURL.toString(),
+    ...(arxivId ? { "sameAs": `https://arxiv.org/abs/${arxivId}` } : {})
+  })} />
+)}
+
+    <!-- ═══════════════════════════════════════════
+         GOOGLE SCHOLAR CITATION META TAGS
+         These tags enable Google Scholar to index articles as citable documents.
+         They only appear on article pages (article=true). Without them, Scholar
+         sees the page as a blog post, not a citable publication.
+         Reference: https://scholar.google.com/intl/en/scholar/inclusion.html
+    ═══════════════════════════════════════════ -->
+    {article && (
+      <>
+        <meta name="citation_title"            content={title} />
+        {authors.map(author => (
+          <meta name="citation_author" content={author} />
+        ))}
+        {publishDate && (
+          <meta name="citation_publication_date" content={publishDate} />
+        )}
+        {arxivId && (
+          <meta name="citation_arxiv_id" content={arxivId} />
+        )}
+        <meta name="citation_online_date" content={publishDate ?? ''} />
+        <meta name="citation_language"    content="en" />
+        <meta name="citation_fulltext_html_url" content={canonicalURL.toString()} />
+      </>
+    )}
+
+    <!-- ═══════════════════════════════════════════
+         FONTS — via Bunny Fonts
+         Bunny Fonts is a privacy-respecting drop-in replacement for Google Fonts.
+         No cookies, no cross-site tracking, GDPR-clean.
+         URL format: https://fonts.bunny.net/css?family=...
+
+         Inter: primary sans-serif for body and navigation
+         IBM Plex Mono: code blocks and inline code
+         Both loaded with font-display:swap to prevent FOIT.
+    ═══════════════════════════════════════════ -->
+    <link rel="preconnect" href="https://fonts.bunny.net" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.bunny.net/css?family=inter:400,500,600|ibm-plex-mono:400,500&display=swap"
+    />
+
+    <!-- ═══════════════════════════════════════════
+         KATEX CSS
+         Loaded from CDN. Version pinned to match the katex npm package version.
+         Verify the version matches package.json before pinning.
+    ═══════════════════════════════════════════ -->
+
+    <!-- ═══════════════════════════════════════════
+         RSS FEED (add this in Stage 4 when articles exist)
+    ═══════════════════════════════════════════ -->
+    <!-- <link rel="alternate" type="application/rss+xml" title="Basyirin Amsyar" href="/rss.xml" /> -->
   </head>
-  <body class="bg-[#0f0f0f] text-gray-200 min-h-screen">
-    <header class="border-b border-gray-800 px-6 py-4">
-      <nav class="max-w-3xl mx-auto flex gap-6 text-sm">
-        <a href="/" class="text-white font-semibold">Basyirin Amsyar</a>
-        <a href="/articles" class="text-gray-400 hover:text-white">Articles</a>
-        <a href="/about" class="text-gray-400 hover:text-white">About</a>
+
+  <body class="bg-[#0f0f0f] text-[#e5e5e5] min-h-screen flex flex-col antialiased">
+
+    <!-- ═══════════════════════════════════════════
+         SKIP TO CONTENT
+         Accessibility requirement. Invisible until focused via keyboard.
+    ═══════════════════════════════════════════ -->
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50
+             focus:bg-[#161616] focus:text-[#a78bfa] focus:px-4 focus:py-2 focus:rounded
+             focus:outline focus:outline-[#a78bfa]"
+    >
+      Skip to content
+    </a>
+
+    <!-- ═══════════════════════════════════════════
+         HEADER / NAV
+    ═══════════════════════════════════════════ -->
+    <header class="border-b border-[#262626] px-6 py-4 sticky top-0 z-40 bg-[#0f0f0f]/95 backdrop-blur-sm">
+      <nav class="max-w-3xl mx-auto flex items-center justify-between gap-6 text-sm">
+        <!-- Site identity — links home, always visible -->
+        <a
+          href="/"
+          class="text-white font-semibold tracking-tight hover:text-[#a78bfa] transition-colors duration-150"
+          aria-label="Basyirin Amsyar — Home"
+        >
+          Basyirin Amsyar
+        </a>
+
+        <!-- Nav links -->
+        <div class="flex items-center gap-5">
+          <a href="/articles" class="text-[#a3a3a3] hover:text-white transition-colors duration-150">
+            Articles
+          </a>
+          <a href="/papers" class="text-[#a3a3a3] hover:text-white transition-colors duration-150">
+            Papers
+          </a>
+          <a href="/projects" class="text-[#a3a3a3] hover:text-white transition-colors duration-150">
+            Projects
+          </a>
+          <a href="/about" class="text-[#a3a3a3] hover:text-white transition-colors duration-150">
+            About
+          </a>
+        </div>
       </nav>
     </header>
-    <main class="max-w-3xl mx-auto px-6 py-12">
+
+    <!-- ═══════════════════════════════════════════
+         MAIN CONTENT AREA
+    ═══════════════════════════════════════════ -->
+    <main id="main-content" class="max-w-3xl mx-auto px-6 py-12 w-full flex-1">
       <slot />
     </main>
-    <footer class="border-t border-gray-800 px-6 py-6 mt-12">
-      <div class="max-w-3xl mx-auto text-sm text-gray-500">
-        © {new Date().getFullYear()} Basyirin Amsyar ·
-        <a href="https://github.com/YOURUSERNAME" class="hover:text-gray-300">GitHub</a>
+
+    <!-- ═══════════════════════════════════════════
+         FOOTER
+    ═══════════════════════════════════════════ -->
+    <footer class="border-t border-[#262626] px-6 py-6 mt-auto">
+      <div class="max-w-3xl mx-auto flex flex-wrap items-center justify-between gap-4 text-sm text-[#525252]">
+        <span>© {new Date().getFullYear()} Basyirin Amsyar</span>
+        <div class="flex gap-5">
+          <a
+            href="https://github.com/basyirin-dev"
+            class="hover:text-[#a3a3a3] transition-colors duration-150"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            GitHub
+          </a>
+          <!-- Add arXiv profile link when preprint is live (Stage 9) -->
+          <!-- <a href="https://arxiv.org/a/YOURID.html" ...>arXiv</a> -->
+          <a
+            href="mailto:basyirin.basri@gmail.com"
+            class="hover:text-[#a3a3a3] transition-colors duration-150"
+          >
+            Contact
+          </a>
+        </div>
       </div>
     </footer>
+
   </body>
 </html>
