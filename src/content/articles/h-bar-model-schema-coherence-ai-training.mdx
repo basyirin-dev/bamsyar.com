@@ -1,0 +1,531 @@
+---
+title: "The Missing Variable in AI Training: Schema Coherence and the H-Bar Model"
+description: "Two agents, identical benchmark scores, one fails compositionally. The variable responsible is not capacity or depth — it is schema coherence, and current training pipelines have no loss term for it."
+publishDate: 2026-03-20
+tags: ["AI Training", "Schema Coherence", "Compositional Generalization", "H-Bar Model", "PIRL", "Delegation Gradient"]
+draft: false
+featured: true
+readingTime: 18
+---
+
+import Callout from '../../components/Callout.astro';
+import PhaseMapFigure from '../../components/figures/PhaseMapFigure.tsx';
+import DelegationGradientFigure from '../../components/figures/DelegationGradientFigure.tsx';
+import PsiHeatmapFigure from '../../components/figures/PsiHeatmapFigure.tsx';
+
+Physics-Informed Residual Learning (PIRL) is a hybrid control architecture for DC motor
+actuation under nonlinear Stribeck friction. It combines a PID feedback term, an analytical
+Stribeck friction model acting as a physics prior, and a compact neural network that learns
+only the residual mismatch between the prior and the true plant. In simulation, it converges
+in under five epochs where unconstrained baselines need 100+, reaching acceptable performance
+with fewer than 500 training samples. By every standard metric, it is a high-competence agent
+within its domain.
+
+Now move the operating conditions outside the Stribeck model's domain — to adhesion-dominated
+contact at elevated normal forces, drivetrain backlash with load-dependent inertia variation,
+or sustained thermal drift in winding resistance. Hardware validation is currently underway.
+But the architecture already makes a specific structural prediction: failure will not spread
+uniformly across the out-of-distribution (OOD) manifold. It will concentrate at the boundaries
+where the Stribeck model's causal assumptions break down, while in-distribution tracking
+performance stays intact. The model's explicit causal prior is what makes this prediction
+possible. For purely learned models — where no analytical prior is available — this article
+develops the tools for making the same prediction from internal representational evidence alone.
+
+Two diagnoses are possible when an agent like this fails OOD. The first: insufficient parametric
+capacity — the network lacks the depth to absorb novel dynamics. Fix: scale up parameters or data.
+The second: structural misalignment — the network's representations are organized around the
+prior's velocity-force-friction causal structure, which is actively misleading outside its domain.
+Scaling does not change what the representations are organized around. These two diagnoses predict
+different error signatures — uniform under the capacity account, clustered at causal boundaries
+under the structural account — and they call for different interventions.
+
+The PIRL case is a controlled instance of a failure pattern the compositional generalization
+literature documents at scale. Models trained to 96–99% in-distribution accuracy on COGS achieve
+only 16–35% on systematic generalization splits.[^1] The SCAN systematic split failure is robust
+across architectures and training scales.[^2] The standard fix — more data, larger models, longer
+training — has been applied extensively and the failure persists. H-Bar's claim: persistence under
+scaling is the signature of the structural diagnosis, not the capacity one. These models do not
+lack depth. Their depth is not organized around the causal variables that generate the task structure.
+
+The framework this article introduces provides three things the existing literature does not.
+
+**First, a formal variable σ** that captures the degree to which an agent's representations are
+organized around generative causal structure rather than surface statistical regularities — with
+explicit developmental dynamics that can be tracked during training. Causal representation
+learning[^3] defines the target state. Invariant Risk Minimization[^4] trains toward it. Neither
+provides a developmental account. σ has phase-indexed growth conditions, suppressible dynamics,
+and delegation consequences that no existing construct models.
+
+**Second, a phase structure** — five training states defined over the joint $(\delta, \sigma)$
+profile of the agent. Each state makes a different training prescription optimal. Each transition
+is triggered by a threshold condition on σ, not by performance saturation or loss-curve events.
+Khetarpal et al. (2022) named this gap explicitly: the field lacks a method for designing
+curricula that deliberately target structured representation development rather than treating it
+as a byproduct of sufficient depth.[^5] The phase structure this article proposes is a direct
+response to that open problem.
+
+**Third, a delegation criterion** — a formal account of when routing tasks to an external
+retrieval system is net-positive and when it is net-negative. Standard adaptive retrieval
+systems — Self-RAG,[^6] FLARE,[^7] and comparable tool-use frameworks — condition delegation on
+the agent's parametric performance gap. They retrieve when internal knowledge is insufficient.
+H-Bar's criterion is different: the relevant variable is σ in the target domain, because σ
+determines whether the agent can evaluate, integrate, and detect errors in retrieved content.
+The two criteria agree when σ is high and diverge when σ is low. This generates a non-monotonic
+prediction: delegation is net-positive above $\sigma_\text{critical}$ and net-negative for
+compositional tasks below it. No existing adaptive retrieval architecture models this.
+
+<Callout type="claim">
+**Central Claim.** Schema coherence $\sigma$ is a formally distinct variable from parametric
+depth $\delta$. Its absence explains compositional generalization failure and OOD brittleness in
+AI agents. Below $\sigma_\text{critical}$, delegating to a retrieval system *degrades* performance
+on compositional tasks rather than improving it — inverting the core assumption of every major
+adaptive retrieval architecture.
+</Callout>
+
+---
+
+## What Current Training Pipelines Miss
+
+Two agents share an identical architecture and are trained on identical data from the same motor.
+After training, they achieve indistinguishable tracking RMSE on held-out in-distribution data. On
+a new motor with different winding impedance but Stribeck-compatible friction dynamics, one agent
+adapts in three epochs. The other needs sixty. No standard evaluation metric predicts this
+difference. It is a prediction of the framework developed in this section.
+
+The dominant training paradigm optimizes a single objective: how well an agent's representations
+fit a training distribution and generalize to nearby test points. When generalization falls short,
+the canonical interventions are more parameters, more data, and longer training. This is internally
+coherent — but it conflates two properties that have different dynamics, different failure modes,
+and different remedies.
+
+The first property is **parametric depth** ($\delta$) — how much of the domain's behavior an
+agent has encoded. The second is whether those encodings are organized around the variables that
+*generate* the domain's behavior, or around correlations that happen to co-occur with it in the
+training distribution. Standard metrics track the first. They are blind to the second. Two agents
+can have equal held-out RMSE and radically different internal organization. That difference only
+surfaces when the distribution shifts in ways that preserve causal structure while breaking surface
+correlations — a different motor, a different load, a compositionally novel input.
+
+The framework introduces **schema coherence** ($\sigma$) to name the second property and to
+formalize what happens when it is missing.
+
+<Callout type="definition" title="Formal Decomposition: δ and σ">
+Let $\delta_A(d, t) \in [0, 1]$ denote **parametric depth** — the normalized fraction of domain
+$d$'s behavioral range that agent $A$ has encoded at time $t$.
+
+Let $\sigma_A(d, t) \in [0, 1]$ denote **schema coherence** — the degree to which those
+representations are organized around the domain's generative causal variables rather than the
+surface statistical regularities of the training distribution.
+
+**The central independence claim.** There exist training regimes such that $\frac{d\delta}{dt} > 0$
+while $\frac{d\sigma}{dt} \approx 0$. Depth grows; schema does not. This is the formal core of
+every prediction in this article. If $\sigma$ and $\delta$ are not independently variable, the
+framework collapses.
+
+$$\frac{d\delta_A}{dt} = f_\delta\!\left(\text{data volume},\ \text{task difficulty},\ \text{architecture}\right)$$
+
+$$\frac{d\sigma_A}{dt} = f_\sigma\!\left(\text{causal coverage},\ \text{structural pressure},\ \text{delegation exposure}\right)$$
+
+The key asymmetry: $f_\sigma$ is **suppressed** by retrieval availability in low-$\sigma$ domains
+— because the causal-variable encoding that would otherwise be required is bypassed — and
+**facilitated** by training regimes that force prediction across causally varied conditions.
+</Callout>
+
+Three operational commitments make σ non-trivially different from existing ML concepts.
+
+**σ is measured by transfer behavior, not representational geometry.** Two agents can have
+identical activation geometry under probing yet different σ if one's geometry clusters by causal
+variables and the other's by training artifacts. The test is not how representations look. It is
+how they behave when the statistical surface shifts while causal structure is preserved. An agent
+with high σ in friction dynamics should adapt faster to a new motor whose Stribeck parameters
+differ from training but whose friction-regime structure does not. An agent with low σ should show
+no adaptation advantage over an agent with zero prior domain knowledge — its representations encode
+the wrong variables.
+
+**σ is not reducible to inductive bias, and it is not disentanglement.** A physics-informed loss
+constrains the hypothesis space during training — that is the inductive bias. σ is what the agent
+has encoded as a result. These can come apart. An agent trained with a strong physics prior can
+have low σ if the prior's constraints were satisfied by surface fitting without explicitly
+representing causal variables. Disentanglement may be a *consequence* of high σ — factors get
+separated because causal variables are separable — but σ is the upstream property that generates
+the factorization. Intervening on geometry does not intervene on σ.
+
+**σ has dynamics that decouple from depth, and those dynamics are suppressible.** An agent trained
+on data from one friction regime builds representations organized around that regime's correlation
+structure. Depth grows. σ does not, because the training objective never required causal variables
+to be the organizational basis. Contrast this with a training regime that forces prediction across
+causally varied conditions — different friction regimes, varied normal forces, both velocity
+directions. Only variables that generalize across all those conditions provide a reliable training
+signal. The prediction: agents trained with this protocol adapt faster to OOD motors than agents
+trained on equivalent data from a non-symmetric distribution, at matched RMSE.
+
+### The Primary σ Proxy: Learning-Rate Discontinuity
+
+The most operationally useful proxy for $\sigma_\text{critical}$ does not require pausing training
+to run held-out evaluations. It is a feature of the learning curve itself.
+
+Above $\sigma_\text{critical}$, new training examples can be integrated into the agent's causal
+encoding rather than appended as new statistical correlations. Integration is more efficient. The
+prediction: crossing $\sigma_\text{critical}$ should produce a detectable discontinuous increase in
+$\frac{d\delta}{dt}$ — depth growth rate — relative to the pre-threshold trend, given equivalent
+training inputs. This is the primary phase-transition indicator.
+
+The connection to grokking[^8] is testable. If the σ proxy crosses threshold at the same point as
+the grokking transition, this supports a σ-based account of the grokking mechanism. If they
+dissociate, the two phenomena are empirically distinct. The PIRL convergence advantage — under five
+epochs vs. 100+ for the unconstrained baseline — is consistent with this mechanism: the Stribeck
+prior injects σ by architecture, placing the agent in a post-$\sigma_\text{critical}$ state from
+the first training step.
+
+Secondary proxies include above-chance performance on a held-out structural transfer task before
+in-domain performance reaches a ceiling, and probing classifier accuracy organized by causal rather
+than artifactual variables. These are more expensive. The learning-rate proxy is the first thing
+to monitor.
+
+### The PIRL Contrast
+
+In a well-trained PIRL controller, σ is high because the architecture makes causal-variable
+encoding the path of least resistance. The Stribeck model handles the three-regime
+velocity-force relationship. The residual network learns only what the causal model gets wrong.
+To minimize loss under this constraint, the residual's activations must track the mismatch between
+causal prediction and actual dynamics — and that requires encoding the causal variables that
+determine where the mismatch is large.
+
+The falsifiable prediction: probing the residual's hidden layers will show clusters organized by
+Stribeck-interpretable features — velocity regime, friction-regime boundary proximity, and
+zero-crossing distance. If clusters instead organize by data collection timestamp, sequence order,
+or other training artifacts, the σ claim is falsified for this architecture.
+
+In a model-free controller trained on the same data, depth can match or exceed PIRL's. But the
+representations achieving that fit are organized around the dominant correlations of a
+single-motor training distribution. OOD adaptation will require substantially more epochs because
+nothing in the existing representations provides a causal scaffold for the new motor.
+
+---
+
+## The Five Training Phases
+
+A clarification is needed before the phase structure is introduced. ML training already uses the
+term "phase" — typically to label early memorization, late generalization, or the grokking
+transition. H-Bar's phases are different in kind. Grokking identifies a post-hoc empirical
+observation: a sharp generalization transition visible in the loss curve, found by inspection
+*after* training. H-Bar's phases are **prescriptive states** defined over the joint
+$(\delta, \sigma)$ profile of the agent. Each state makes a different training prescription
+optimal. Each transition is triggered by a threshold on the agent's internal representational
+variables, not by elapsed steps or loss-curve events.
+
+One honest limitation: $\sigma_\text{critical}$ is not directly observable with current evaluation
+instruments. The learning-rate discontinuity proxy is the primary in-training indicator. The
+framework's value is that it specifies what would need to be measured and predicts how that
+measurement correlates with training outcomes.
+
+Curriculum learning (Bengio et al., 2009)[^9] optimizes the growth rate of parametric depth. It
+is the correct prescription in regimes where $\sigma \approx 0$ throughout. H-Bar subsumes this
+as the low-$\sigma$ special case. The crossing of $\sigma_\text{critical}$ is a structural event
+in the agent's representations, not a performance event visible on the loss surface. No
+difficulty schedule — monotonic or adaptive — can detect it or respond to it appropriately.
+
+The mastery set $\mathcal{M}_A(t)$ is the set of domains in which both conditions are satisfied
+simultaneously:
+
+$$\mathcal{M}_A(t) = \left\{ d \;\middle|\; \delta_A(d, t) \geq \delta_\text{critical} \wedge \sigma_A(d, t) \geq \sigma_\text{critical} \right\}$$
+
+The phase at time $t$ is determined by the agent's joint $(\delta_A, \sigma_A)$ position. Drag
+the marker in Figure 1 to explore how the training prescription and failure mode change across the
+phase space.
+
+<PhaseMapFigure client:visible />
+
+**Figure 1.** The $(\delta, \sigma)$ phase map. Drag the marker to explore all five training phases.
+The dashed lines mark $\delta_\text{critical}$ and $\sigma_\text{critical}$. Phase 2 occupies the
+upper-left quadrant — schema crystallising while depth is still moderate — and is the phase most
+standard pipelines either miss entirely or pass through without deliberate intervention.
+
+### Phase 0 — Initialisation
+
+$\delta \approx 0$, $\sigma \approx 0$. No stable domain-specific representations have formed.
+Curriculum order matters most here: a Phase 0 curriculum that exposes causal variables before
+their surface correlates should produce measurably different downstream σ trajectories than random
+sampling from the same data, at equal volume. The difference does not appear in Phase 0 in-domain
+loss — it accumulates and surfaces only when Phase 2 structural pressure arrives. The Symmetric
+Harvesting Protocol in PIRL — enforcing balanced data representation across both velocity
+directions before either dominates the correlation structure — is a Phase 0 intervention of this
+type.
+
+### Phase 1 — Depth Accumulation
+
+$\delta$ growing, $\sigma < \sigma_\text{critical}$. The growth-limiting variable is $\delta$.
+Easy-to-hard difficulty scheduling is the correct heuristic here — H-Bar does not dispute
+Bengio-style curricula in this regime. What difficulty scheduling misses: while $\delta$ is the
+growth-limiting variable, the curriculum simultaneously determines which representations get built.
+If every training batch in Phase 1 can be solved without encoding causal variables, depth grows
+while σ stays near zero. This is precisely the SCAN/COGS failure pattern: high in-distribution
+accuracy, brittle systematic generalization. More data reduces error magnitude without changing
+error structure.
+
+### Phase 2 — σ Crystallisation
+
+$\sigma$ crosses $\sigma_\text{critical}$ in at least one mastery domain. This is the first phase
+transition that standard pipelines have no mechanism to detect or respond to. The learning-rate
+discontinuity is the primary signal: above $\sigma_\text{critical}$, examples integrate into
+causal encoding rather than appending as statistical correlations, and $\frac{d\delta}{dt}$
+should show a detectable step-change.
+
+Phase 2 is also where cross-domain transfer first becomes meaningful. Below $\sigma_\text{critical}$,
+structural similarity $\phi(d_1, d_2)$ between domains cannot generate useful transfer — there is
+no causal encoding in the source domain to carry across. Above $\sigma_\text{critical}$,
+source-domain causal structure becomes a scaffold for faster representation-building in high-$\phi$
+target domains.
+
+**Critical failure mode:** introducing cross-domain transfer tasks before σ_critical is reached in
+the source domain transfers statistical correlations, not causal structure. H-Bar predicts that
+variance in multi-task transfer outcomes correlates with the source-domain σ proxy at the time of
+cross-domain exposure.
+
+### Phase 3 — Near-Frontier Depth
+
+$\delta$ approaching the frontier in mastery domains, $\sigma \geq \sigma_\text{critical}$.
+In-domain benchmarks are high; further in-domain training shows diminishing returns.
+
+This is where most standard pipelines terminate. Treating benchmark saturation as "training
+complete" produces an agent with high δ and high σ that has never been exposed to conditions
+activating the intersection mechanism. Its performance profile matches a high-σ specialist on
+in-domain benchmarks and shows zero above-additive compositional benefit — indistinguishable from
+a capacity-limited agent until cross-domain testing is applied.
+
+What H-Bar predicts at Phase 3: the growth-limiting variable has shifted from $\delta$ to the
+cross-domain interaction term. The high-value training signal is structured cross-domain exposure
+to domain pairs with high $\phi(d_1, d_2)$ and $\sigma \geq \sigma_\text{critical}$ in both.
+
+### Phase 4 — Intersection Activation
+
+Above-additive cross-domain performance becomes measurably positive — $\Psi > 0$. The distinctive
+prediction is multiplicative σ-dependence: halve σ in one contributing domain and $\Psi$ drops by
+approximately half, not incrementally. This is the claim that distinguishes H-Bar from general
+multi-task learning, which predicts additive benefits from domain combination regardless of σ
+distribution.
+
+### Phase 5 — Frontier Operation
+
+The agent operates at or near the knowledge frontier, with high $\delta$ and high $\sigma$,
+actively engaging $\Psi$ across domain pairs. δ growth is now generative rather than acquisitive.
+Maintaining mastery status means tracking frontier advancement — the concern is not absolute depth
+but *relative* depth $\delta_A / \Delta(d, t)$.
+
+---
+
+## The Delegation Gradient
+
+Every RAG system and tool-use agent faces the same design question: which knowledge should live in
+parametric weights and which should be retrieved at inference time? The standard answer: retrieve
+when the external system outperforms the model on the query. The standard practice: expand
+delegation aggressively, because retrieval quality is improving faster than parametric training
+efficiency.
+
+H-Bar's claim is that this criterion is incomplete in a specific, testable way.
+
+### The Standard and H-Bar Criteria Compared
+
+Under the standard criterion, the delegation set $\mathcal{D}^*$ is defined as:
+
+$$\mathcal{D}^*_\text{standard}(d, t) = \left\{ s \in d \;\middle|\; \delta_{\text{AI}}(s, t) \geq \delta_A(s, t) \right\}$$
+
+Delegate sub-skill $s$ when the external system outperforms the agent's parametric knowledge on
+that sub-skill. H-Bar adds a single gate:
+
+$$\mathcal{D}^*_{\text{H-Bar}}(d, t) = \left\{ s \in d \;\middle|\; \delta_{\text{AI}}(s, t) \geq \delta_A(s, t) \wedge \sigma_A(d, t) \geq \sigma_{\text{critical}} \right\}$$
+
+Sub-skills that pass the performance criterion are still excluded from delegation if the agent's
+schema coherence in the domain is below $\sigma_\text{critical}$. The reason: the agent cannot
+evaluate what is retrieved in that domain, so the effective depth gain from retrieval approaches
+zero and the risk of accepting causally inconsistent results is high.
+
+This is not a theoretical concern. The test is direct: present agents differing only in σ proxy
+level with retrieved results that are (a) statistically plausible and causally consistent, and
+(b) statistically plausible and causally inconsistent. The high-σ agent should discriminate
+between categories above chance. The low-σ agent should not.
+
+### Effective Depth Under Delegation
+
+The effective depth realized from delegation is σ-gated:
+
+$$\delta_\text{eff}(s, t) = \delta_A(s, t) + \Phi_A \cdot f\!\left(\delta_{\text{AI}}(s, t),\; \sigma_A(d, t)\right)$$
+
+where $\Phi_A \in [0,1]$ is integration fluency and $f$ satisfies $f \to 0$ as $\sigma \to 0$.
+High retrieval quality $\delta_\text{AI}$ does not increase effective depth when $\sigma \approx 0$,
+regardless of integration fluency. The linear form $f = \sigma \cdot \delta_\text{AI}$ satisfies
+this constraint; the threshold form $f = \delta_\text{AI} \cdot \mathbf{1}\!\left[\sigma \geq \sigma_\text{critical}\right]$
+is more consistent with the discontinuous phase structure.
+
+### The Non-Monotonic Prediction
+
+The central empirical prediction: holding retrieval quality fixed, increasing delegation rate
+*improves* end-task performance above $\sigma_\text{critical}$ and *reduces* it for compositional
+tasks below it.
+
+$$\frac{\partial \text{Acc}_{\text{comp}}}{\partial \rho} = \begin{cases} > 0 & \text{if } \sigma_A(d,t) \geq \sigma_{\text{critical}} \\[4pt] < 0 & \text{if } \sigma_A(d,t) < \sigma_{\text{critical}} \end{cases}$$
+
+This prediction applies in two contexts. **During training:** high-quality retrieval available as
+a primary answer source in low-σ domains suppresses σ development — the agent achieves low
+training loss through retrieval rather than through causal encoding. The loss trajectory looks
+identical to a retrieval-disabled agent. Downstream generalization diverges. **At inference time:**
+for an already-trained agent, increasing delegation in low-σ domains degrades performance on
+compositional queries because the agent accepts causally inconsistent results it cannot verify.
+
+<DelegationGradientFigure client:visible />
+
+**Figure 2.** The delegation gradient $\mathcal{D}^*(d,t)$. Drag the AI capability slider to see
+the delegation frontier expand. The agent's $\sigma$ profile (the step function) determines which
+regions are safe to delegate. Below $\sigma_\text{critical}$, adding retrieval capability does not
+improve compositional task performance — it adds retrieval latency and hallucination surface area
+without improving the agent's ability to verify what is retrieved. The correct boundary for
+$\mathcal{D}^*$ is set at $\sigma_\text{critical}$, not at the AI performance crossover.
+
+### What Distinguishes This From Existing Adaptive Retrieval
+
+Self-RAG conditions retrieval on a reflection token signalling factual uncertainty. FLARE triggers
+retrieval when next-token probability falls below a threshold. All such systems ask: *is the agent
+uncertain?* H-Bar asks: *does the agent have sufficient σ to evaluate retrieved content?*
+
+These questions produce different routing decisions when confidence is low and σ is low
+simultaneously — the condition that arises in domains where the agent has not yet built causal
+structure. Under confidence-based routing, low confidence triggers retrieval. Under H-Bar's
+criterion, low σ should suppress retrieval even when confidence is also low: the agent cannot
+verify what is retrieved, and the expected loss from accepting a causally inconsistent result
+exceeds the expected loss from the parametric answer. That is a concrete, testable divergence.
+
+PIRL provides a bounded but instructive analogy. The Stribeck prior handles the analytically
+specified friction regime. The residual handles everything else. The delegation boundary sits where
+the prior's causal assumptions hold. An architecture that detected when Stribeck assumptions were
+being violated and *contracted* the prior's delegation scope in response would be a closer analogue
+to dynamic $\mathcal{D}^*$ — and is precisely the capability PIRL currently lacks on OOD dynamics.
+
+---
+
+## The Ψ Mechanism: Why Schema Coherence Gates Intersection Discovery
+
+When an agent has σ above threshold in two or more domains, and those domains share sufficiently
+high structural similarity $\phi(d_1, d_2)$, cross-domain interaction produces above-additive
+performance on compositional tasks. This is the intersection activation mechanism $\Psi$.
+
+The key claim is that the benefit scales **multiplicatively** with σ in both contributing domains,
+not additively:
+
+$$\Psi(d_1, d_2, t) \propto \sigma_A(d_1, t) \times \sigma_A(d_2, t) \times \phi(d_1, d_2)$$
+
+The general form is:
+
+$$\Psi(d_1, d_2, t) = \begin{cases} g\!\left(\sigma_A(d_1, t),\; \sigma_A(d_2, t),\; \phi(d_1, d_2)\right) - C_\text{baseline} & \text{if } \sigma_A(d_1,t) \cdot \sigma_A(d_2,t) > \theta_I \\[4pt] 0 & \text{otherwise} \end{cases}$$
+
+where $C_\text{baseline}$ is the additive specialist baseline and $g$ is monotone increasing in
+each σ argument.
+
+Why multiplicative and not additive? If cross-domain benefit required only that the agent be
+present in both domains, any juxtaposition would generate it. Experienced systems know that breadth
+without causal structure in *both* contributing domains is encyclopedic, not generative. An agent
+with high depth in $d_2$ and low σ in $d_1$ cannot bring the causal variables of $d_1$ to bear on
+a problem at their intersection — it can only surface the surface correlations. Multiplicative is
+the correct formalization: $\Psi$ collapses if *either* σ is low, even if the other is high.
+
+This is the testable divergence from general multi-task learning: H-Bar predicts that halving σ in
+one contributing domain reduces $\Psi$ by approximately half; multi-task learning predicts
+incremental reduction. Figure 3 makes this structure directly explorable. Use the toggle to
+compare the multiplicative (H-Bar) and additive (baseline) predictions across the full σ space.
+
+<PsiHeatmapFigure client:visible />
+
+**Figure 3.** The $\Psi$ activation heatmap. Hover any cell to read the exact Ψ values under both
+models. The dashed line marks the $\theta_I$ boundary — below it, $\Psi = 0$ regardless of depth.
+The PIRL annotation (outlined cell) marks the physics-prior × residual intersection at σ_prior ≈
+0.85, σ_residual ≈ 0.70. Toggle to the additive baseline to see what general multi-task learning
+would predict at the same point — the discrepancy is the falsification target.
+
+### PIRL as a Worked Example
+
+In PIRL, the Ψ mechanism has a direct architectural analogue. The PID feedback term, the Stribeck
+physics prior, and the residual NN form a designed three-component intersection. The prediction:
+PIRL's performance advantage should be super-additive — the three-component system should
+outperform the sum of any two-component alternatives. If the advantage is merely additive
+(PID + Stribeck + NN ≈ PID + Stribeck + PID + NN), the multiplicative Ψ account is falsified for
+this architecture. If it is super-additive, this is consistent with Ψ being active.
+
+This is the most directly executable single experiment the framework specifies: ablate PIRL's
+three components systematically, measure whether performance advantages are additive or
+super-additive, and compare error distributions at the OOD boundary. It requires only existing
+PIRL infrastructure.
+
+---
+
+## What This Means for Training
+
+**At Phase 1 → 2.** Stop optimizing purely for distribution fit. Add training conditions that force
+causal-variable representation — varied conditions that share underlying causal structure but
+differ in surface statistics. Monitor the learning-rate proxy for the $\sigma_\text{critical}$
+crossing. Do not introduce high-quality retrieval as a primary answer source at this stage: it
+suppresses σ development by bypassing the encoding pressure that would otherwise be required.
+
+**At Phase 2 → 3.** Do not expand the agent's breadth profile before σ is developed. AI-assisted
+breadth expansion in a low-σ agent creates the illusion of literacy without the schema to verify
+it. The delegation rule applies here: expand breadth through domains where σ is already above
+$\sigma_\text{critical}$. The σ proxy level at the time of cross-domain exposure is the single
+strongest predictor of whether cross-domain training will produce positive or negative transfer.
+
+**At Phase 3 and beyond.** The training objective shifts from maximizing $\delta$ to maximizing
+$\Psi$. Cross-domain training with high-$\phi$ domain pairs becomes the primary investment.
+Delegation expands into the sub-$\sigma_\text{critical}$ frontier — but strictly within the schema
+boundary. An agent that expands $\mathcal{D}^*$ in high-σ domains frees parametric capacity for
+frontier work without incurring verification costs. The same expansion in low-σ domains produces
+short-run surface-accuracy gains and long-run systematic-split losses.
+
+---
+
+## Conclusion
+
+H-Bar started with a concrete engineering observation: PIRL adapts in a fraction of the epochs
+that unconstrained baselines require. That ratio has no explanation under the standard training
+paradigm, which tracks only the volume and quality of training data, not the organizational
+structure of what was learned from it. The framework treats that ratio as diagnostic evidence: two
+agents can reach the same benchmark score through representations organized around fundamentally
+different variables — and this difference determines everything that happens when the distribution
+shifts.
+
+The field is building agents that score well on benchmarks that measure $\delta$ and poorly on
+benchmarks that measure whether $\delta$ has any causal structure behind it. H-Bar's contribution
+is to specify what that missing structure is, how it behaves dynamically, what happens when it is
+absent at each phase of training, and what the correct routing decision is when it is not. The
+missing variable is not mysterious. It is measurable. The conditions that suppress it are
+specifiable. The interventions that develop it are concrete.
+
+The H-Bar Model is a formal account of why two AI agents with identical performance scores on
+standard tasks can have radically different capabilities on novel problems — and what to do about
+it during training.
+
+<Callout type="note" title="Current Status">
+This article presents the theoretical framework and its falsifiable predictions. Hardware
+validation of the PIRL case study is currently underway on Teensy 4.1 hardware. A formal paper
+specifying the complete mathematical treatment, including the coupled dynamical system and the
+full experimental protocols, is in preparation for submission to JAIR (Journal of Artificial
+Intelligence Research). An arXiv preprint will be linked here on submission.
+</Callout>
+
+---
+
+## References
+
+[^1]: Kim, N., & Linzen, T. (2020). COGS: A compositional generalization challenge based on semantic interpretation. *EMNLP*.
+
+[^2]: Lake, B., & Baroni, M. (2017). Generalisation without systematicity: On the compositional skills of sequence-to-sequence recurrent networks. *arXiv:1711.00350*. Hupkes, D., et al. (2019). Compositionality decomposed: How do neural networks generalise? *JAIR*.
+
+[^3]: Schölkopf, B., et al. (2021). Toward causal representation learning. *Proceedings of the IEEE*, 109(5), 612–634.
+
+[^4]: Arjovsky, M., Bottou, L., Gulrajani, I., & Lopez-Paz, D. (2019). Invariant risk minimization. *arXiv:1907.02893*.
+
+[^5]: Khetarpal, K., Riemer, M., Rish, I., & Precup, D. (2022). Towards continual reinforcement learning: A review and perspectives. *JAIR*, 75.
+
+[^6]: Asai, A., Wu, Z., Wang, Y., Sil, A., & Hajishirzi, H. (2023). Self-RAG: Learning to retrieve, generate, and critique through self-reflection. *arXiv:2310.11511*.
+
+[^7]: Jiang, Z., et al. (2023). FLARE: Active retrieval augmented generation. *arXiv:2305.06983*.
+
+[^8]: Power, A., Burda, Y., Edwards, H., Babuschkin, I., & Misra, V. (2022). Grokking: Generalization beyond overfitting on small algorithmic datasets. *arXiv:2201.02177*.
+
+[^9]: Bengio, Y., Louradour, J., Collobert, R., & Weston, J. (2009). Curriculum learning. *Proceedings of ICML*.
