@@ -1,0 +1,68 @@
+---
+/**
+ * src/components/Giscus.astro
+ *
+ * FIX: the previous version used a <script> tag with {} attribute
+ * interpolations. Astro sends <script> tags through esbuild, which
+ * treats {} as JS syntax — not Astro template expressions — and throws
+ * "Unterminated string literal". The correct pattern for third-party
+ * script injection with dynamic attributes is <Fragment set:html={...}>,
+ * which emits raw HTML and bypasses esbuild entirely.
+ */
+
+interface Props {
+  repo:         string;
+  repoId:       string;
+  category:     string;
+  categoryId:   string;
+  mapping?:     'pathname' | 'url' | 'title' | 'og:title';
+  theme?:       string;
+  lang?:        string;
+}
+
+const {
+  repo,
+  repoId,
+  category,
+  categoryId,
+  mapping  = 'pathname',
+  theme    = 'transparent_dark',
+  lang     = 'en',
+} = Astro.props;
+
+// Build the script tag as a plain string so esbuild never sees it.
+// Every attribute value is interpolated here in the frontmatter (server-side),
+// then emitted verbatim into the HTML output via set:html.
+const giscusScript = `<script
+  src="https://giscus.app/client.js"
+  data-repo="${repo}"
+  data-repo-id="${repoId}"
+  data-category="${category}"
+  data-category-id="${categoryId}"
+  data-mapping="${mapping}"
+  data-strict="0"
+  data-reactions-enabled="1"
+  data-emit-metadata="0"
+  data-input-position="top"
+  data-theme="${theme}"
+  data-lang="${lang}"
+  data-loading="lazy"
+  crossorigin="anonymous"
+  async
+></script>`;
+---
+
+<section
+  id="giscus-container"
+  aria-label="Article comments"
+  style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #262626;"
+>
+  <p style="color: #525252; font-size: 0.8rem; margin-bottom: 1.25rem; letter-spacing: 0.04em; text-transform: uppercase; font-weight: 600;">
+    Discussion
+  </p>
+
+  <div class="giscus"></div>
+</section>
+
+<!-- Raw HTML injection — esbuild does not process this -->
+<Fragment set:html={giscusScript} />

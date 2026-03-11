@@ -1,6 +1,25 @@
 ---
-import BaseLayout from './BaseLayout.astro';
+/**
+ * src/layouts/ArticleLayout.astro
+ *
+ * Complete article layout: header meta, prose body, BibTeX block,
+ * Giscus comment section. Replaces the Stage 3 skeleton.
+ *
+ * Replace the four GISCUS_* constants below with your values from
+ * https://giscus.app before deploying.
+ */
+
 import type { CollectionEntry } from 'astro:content';
+import { render } from 'astro:content';
+import BaseLayout from './BaseLayout.astro';
+import Giscus from '../components/Giscus.astro';
+
+// ── Giscus config — fill from https://giscus.app ─────────────────────
+// These four constants are the only values you need to change.
+const GISCUS_REPO          = 'basyirin-dev/bamsyar.com';          // your-username/repo
+const GISCUS_REPO_ID       = 'R_kgDORjZ2Zg';                 // from giscus.app
+const GISCUS_CATEGORY      = 'Announcements';                 // your chosen category
+const GISCUS_CATEGORY_ID   = 'DIC_kwDORjZ2Zs4C4GAP';               // from giscus.app
 
 interface Props {
   entry: CollectionEntry<'articles'>;
@@ -9,112 +28,149 @@ interface Props {
 const { entry } = Astro.props;
 const { title, description, publishDate, updatedDate, tags, arxivId, readingTime } = entry.data;
 
-const pubDateFormatted = publishDate.toLocaleDateString('en-US', {
+// Rendered MDX body
+const { Content } = await render(entry);
+
+// Canonical URL for this article
+const canonicalURL = new URL(`/articles/${entry.id}`, Astro.site);
+
+// OG image: per-article dynamic path if it exists, else default
+const ogImage = new URL(`/og/${entry.id}.png`, Astro.site).toString();
+
+// Formatted dates
+const pubDateISO      = publishDate.toISOString();
+const pubDateDisplay  = publishDate.toLocaleDateString('en-US', {
   year: 'numeric', month: 'long', day: 'numeric',
 });
-const pubDateISO = publishDate.toISOString();
+const updDateDisplay  = updatedDate
+  ? updatedDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+  : null;
 
-const updDateFormatted = updatedDate?.toLocaleDateString('en-US', {
-  year: 'numeric', month: 'long', day: 'numeric',
-});
-const updDateISO = updatedDate?.toISOString();
+// BibTeX generation
+const pubYear = publishDate.getFullYear();
+const citeKey = `amsyar${pubYear}`;  // e.g. amsyar2026
 
-const arxivUrl = arxivId ? `https://arxiv.org/abs/${arxivId}` : null;
-
-const bibtexString = arxivId
-  ? `@misc{${entry.id.replace(/[^a-zA-Z0-9]/g, '_')},
-  author        = {Basyirin Amsyar},
-  title         = {${title}},
-  year          = {${publishDate.getFullYear()}},
-  eprint        = {${arxivId}},
+const bibtex = arxivId
+  ? `@misc{${citeKey},
+  title   = {${title}},
+  author  = {Amsyar, Basyirin},
+  year    = {${pubYear}},
+  eprint  = {${arxivId}},
   archivePrefix = {arXiv},
   primaryClass  = {cs.AI},
-  url           = {https://arxiv.org/abs/${arxivId}}
+  url     = {https://arxiv.org/abs/${arxivId}}
 }`
-  : `@misc{${entry.id.replace(/[^a-zA-Z0-9]/g, '_')},
-  author       = {Basyirin Amsyar},
-  title        = {${title}},
-  year         = {${publishDate.getFullYear()}},
-  howpublished = {\\url{https://bamsyar.pages.dev/articles/${entry.id}}},
-  note         = {Online article}
+  : `@misc{${citeKey},
+  title   = {${title}},
+  author  = {Amsyar, Basyirin},
+  year    = {${pubYear}},
+  url     = {${canonicalURL}},
+  note    = {bamsyar.com}
 }`;
 ---
 
 <BaseLayout
-  {title}
-  {description}
+  title={title}
+  description={description}
   article={true}
-  publishDate={pubDateISO}
-  {arxivId}
+  publishDate={publishDate}
+  arxivId={arxivId}
+  ogImage={ogImage}
 >
+
   <article>
 
-    <!-- ARTICLE HEADER -->
-    <header class="mb-10 pb-8 border-b border-[#262626]">
+    <!-- ── Article header ──────────────────────────────────────────── -->
+    <header style="margin-bottom: 2.5rem;">
 
-      <div class="flex flex-wrap gap-2 mb-4">
-        {tags.map(tag => (
-          <a href={`/articles?tag=${encodeURIComponent(tag)}`} class="text-[11px] uppercase tracking-wider text-[#a78bfa] hover:text-white bg-violet-950/30 border border-violet-800/40 px-2 py-0.5 rounded transition-colors duration-150">
+      <!-- Tag pills -->
+      <div style="display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1rem;">
+        {tags.map((tag: string) => (
+          <a
+            href={`/articles?tag=${encodeURIComponent(tag)}`}
+            style="display: inline-block; padding: 0.15rem 0.6rem; border-radius: 9999px; border: 1px solid #404040; color: #a3a3a3; font-size: 0.72rem; text-decoration: none; letter-spacing: 0.04em; transition: border-color 0.15s, color 0.15s;"
+          >
             {tag}
           </a>
         ))}
       </div>
 
-      <h1 class="text-2xl font-semibold text-white leading-snug tracking-tight mb-4">
+      <!-- Title -->
+      <h1 style="font-size: clamp(1.5rem, 4vw, 2.1rem); font-weight: 700; line-height: 1.2; color: #f5f5f5; margin-bottom: 0.875rem;">
         {title}
       </h1>
 
-      <p class="text-[#a3a3a3] text-base leading-relaxed mb-5">
+      <!-- Description -->
+      <p style="font-size: 1.05rem; color: #a3a3a3; line-height: 1.6; margin-bottom: 1.25rem;">
         {description}
       </p>
 
-      <div class="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-[#525252]">
-
-        <time datetime={pubDateISO} class="text-[#737373]">
-          {pubDateFormatted}
-        </time>
+      <!-- Meta row: date · reading time · updated · arXiv -->
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.25rem; font-size: 0.8rem; color: #737373;">
+        <time datetime={pubDateISO}>{pubDateDisplay}</time>
 
         {readingTime && (
-          <span class="text-[#525252]">{readingTime} min read</span>
+          <span>{readingTime} min read</span>
         )}
 
-        {updatedDate && (
-          <span class="text-[#525252]">
-            Updated <time datetime={updDateISO}>{updDateFormatted}</time>
-          </span>
+        {updDateDisplay && (
+          <span>Updated {updDateDisplay}</span>
         )}
 
-        {arxivUrl && (
-          <a href={arxivUrl} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-wider text-[#a78bfa] hover:text-white border border-violet-800/50 bg-violet-950/30 px-2.5 py-1 rounded transition-colors duration-150">
+        {arxivId && (
+          <a
+            href={`https://arxiv.org/abs/${arxivId}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style="display: inline-flex; align-items: center; gap: 0.3rem; color: #a78bfa; text-decoration: none; border: 1px solid #a78bfa44; border-radius: 0.3rem; padding: 0.1rem 0.5rem; font-size: 0.72rem; letter-spacing: 0.04em;"
+          >
             arXiv:{arxivId}
           </a>
         )}
-
       </div>
+
     </header>
 
-    <!-- ARTICLE BODY -->
+    <!-- ── Article body ─────────────────────────────────────────────── -->
     <div class="prose prose-invert max-w-none">
-      <slot />
+      <Content />
     </div>
 
-    <!-- POST-BODY FOOTER -->
-    <footer class="mt-14 pt-8 border-t border-[#262626] space-y-8">
+    <!-- ── Article footer ──────────────────────────────────────────── -->
+    <footer style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #262626;">
 
-      <div>
-        <h2 class="text-xs uppercase tracking-widest text-[#525252] mb-3 font-medium">
-          Citation
-        </h2>
-        <details class="group">
-          <summary class="cursor-pointer text-sm text-[#a3a3a3] hover:text-white transition-colors duration-150 list-none flex items-center gap-2">
-            <span class="text-[#525252] group-open:rotate-90 transition-transform duration-150 inline-block select-none">▶</span>
-            Show BibTeX
-          </summary>
-          <pre class="mt-3 bg-[#161616] border border-[#262626] rounded-lg px-4 py-3 text-[0.8rem] text-[#a3a3a3] font-mono overflow-x-auto leading-relaxed whitespace-pre-wrap break-words">{bibtexString}</pre>
-        </details>
-      </div>
+      <!-- BibTeX citation block -->
+      <details style="margin-bottom: 2rem;">
+        <summary style="cursor: pointer; color: #737373; font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase; font-weight: 600; user-select: none;">
+          Cite this article
+        </summary>
+        <div style="margin-top: 0.875rem;">
+          <pre style="background: #161616; border: 1px solid #262626; border-radius: 0.5rem; padding: 1rem 1.25rem; font-size: 0.78rem; font-family: 'IBM Plex Mono', monospace; color: #e5e5e5; overflow-x: auto; line-height: 1.65; white-space: pre;">
+{bibtex}
+          </pre>
+          <p style="margin-top: 0.5rem; color: #525252; font-size: 0.72rem;">
+            {arxivId
+              ? 'arXiv preprint. Update citation once formally published.'
+              : 'No arXiv ID yet. Will be updated on preprint submission.'}
+          </p>
+        </div>
+      </details>
 
     </footer>
 
   </article>
+
+  <!-- ── Giscus comments ─────────────────────────────────────────── -->
+  <!--
+    Placed outside <article> so the discussion section is semantically
+    separate from the article content. Screen readers and document
+    outlines benefit from this separation.
+  -->
+  <Giscus
+    repo={GISCUS_REPO}
+    repoId={GISCUS_REPO_ID}
+    category={GISCUS_CATEGORY}
+    categoryId={GISCUS_CATEGORY_ID}
+  />
+
 </BaseLayout>
