@@ -1,0 +1,241 @@
+<svg width="800" height="600" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+
+<!-- BACKGROUND -->
+<rect width="800" height="600" fill="#0D0D0D"/>
+
+<!-- ──────────────────────────────────────── -->
+<!-- HEADER                                  -->
+<!-- ──────────────────────────────────────── -->
+<text x="30" y="36" font-family="sans-serif" font-weight="bold" font-size="20" fill="#F2F2F2" letter-spacing="1">FIGURE 4 — Intersection Activation: PIRL as Worked Example</text>
+<text x="30" y="57" font-family="sans-serif" font-size="12" fill="#9A9A9A">Ψ fires when σ(d₁) and σ(d₂) both exceed θ<tspan baseline-shift="-30%" font-size="9">I</tspan> — generating capability neither domain produces alone</text>
+<line x1="30" y1="67" x2="770" y2="67" stroke="#3A3A3A" stroke-width="1"/>
+
+<!-- ──────────────────────────────────────── -->
+<!-- LEGEND — top-left, x=30–196, y=76–168  -->
+<!-- safely left of discovery box at x=536  -->
+<!-- ──────────────────────────────────────── -->
+<rect x="536" y="186" width="228" height="92" fill="#111111" stroke="#3A3A3A" stroke-width="1" rx="4"/>
+<rect x="546" y="198" width="11" height="11" fill="#00FFFF" fill-opacity="0.65" rx="2"/>
+<text x="563" y="208" font-family="monospace" font-size="11" fill="#F2F2F2">σ(d₁)  Physics Prior</text>
+<rect x="546" y="216" width="11" height="11" fill="#F4A823" rx="2"/>
+<text x="563" y="226" font-family="monospace" font-size="11" fill="#F2F2F2">σ(d₂)  Residual NN</text>
+<line x1="546" y1="240" x2="558" y2="240" stroke="#E8E8E8" stroke-width="1.5" stroke-dasharray="5,3"/>
+<text x="563" y="244" font-family="monospace" font-size="11" fill="#F2F2F2">θ<tspan baseline-shift="-30%" font-size="8">I</tspan>  activation threshold</text>
+<circle cx="552" cy="264" r="7" fill="#00FFFF" fill-opacity="0.55"/>
+<text x="563" y="268" font-family="monospace" font-size="11" fill="#F2F2F2">Ψ   intersection event</text>
+
+<!-- ──────────────────────────────────────── -->
+<!-- Y-AXIS                                  -->
+<!-- y(σ) = 445 − σ×355                     -->
+<!-- σ=1.0→y=90  σ=0.8→y=161               -->
+<!-- σ=0.6→y=232  σ=0.4→y=303              -->
+<!-- σ=0.2→y=374  σ=0.0→y=445              -->
+<!-- ──────────────────────────────────────── -->
+<path d="M 112 90 L 112 445 L 530 445" fill="none" stroke="#3A3A3A" stroke-width="1.5"/>
+<polygon points="530,445 521,441 521,449" fill="#3A3A3A"/>
+
+<text transform="rotate(-90)" x="-267" y="60" font-family="sans-serif" font-size="12" fill="#6B6B6B" text-anchor="middle">Schema Coherence σ</text>
+
+<line x1="107" y1="90"  x2="115" y2="90"  stroke="#3A3A3A" stroke-width="1.5"/>
+<text x="105" y="94"  font-family="monospace" font-size="12" fill="#6B6B6B" text-anchor="end">1.0</text>
+<line x1="107" y1="161" x2="115" y2="161" stroke="#3A3A3A" stroke-width="1.5"/>
+<text x="105" y="165" font-family="monospace" font-size="12" fill="#6B6B6B" text-anchor="end">0.8</text>
+<line x1="107" y1="232" x2="115" y2="232" stroke="#3A3A3A" stroke-width="1.5"/>
+<text x="105" y="236" font-family="monospace" font-size="12" fill="#6B6B6B" text-anchor="end">0.6</text>
+<line x1="107" y1="303" x2="115" y2="303" stroke="#3A3A3A" stroke-width="1.5"/>
+<text x="105" y="307" font-family="monospace" font-size="12" fill="#6B6B6B" text-anchor="end">0.4</text>
+<line x1="107" y1="374" x2="115" y2="374" stroke="#3A3A3A" stroke-width="1.5"/>
+<text x="105" y="378" font-family="monospace" font-size="12" fill="#6B6B6B" text-anchor="end">0.2</text>
+<line x1="107" y1="445" x2="115" y2="445" stroke="#3A3A3A" stroke-width="1.5"/>
+<text x="105" y="449" font-family="monospace" font-size="12" fill="#6B6B6B" text-anchor="end">0.0</text>
+
+<!-- Subtle grid lines at 0.8, 0.6, 0.2 -->
+<line x1="115" y1="161" x2="528" y2="161" stroke="#1E1E1E" stroke-width="1" stroke-dasharray="2,8"/>
+<line x1="115" y1="232" x2="528" y2="232" stroke="#1E1E1E" stroke-width="1" stroke-dasharray="2,8"/>
+<line x1="115" y1="374" x2="528" y2="374" stroke="#1E1E1E" stroke-width="1" stroke-dasharray="2,8"/>
+
+<!-- θI dashed reference line at σ=0.40, y=303 -->
+<line x1="115" y1="303" x2="528" y2="303" stroke="#E8E8E8" stroke-width="1" stroke-dasharray="10,5" opacity="0.55"/>
+<text x="530" y="299" font-family="monospace" font-size="10" fill="#E8E8E8">θ<tspan baseline-shift="-30%" font-size="8">I</tspan></text>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- t₁  STAGE  — Early                        -->
+<!-- d₁ Physics Prior: x=185–208, σ=0.85       -->
+<!--   h=302, top y=143                        -->
+<!-- d₂ Residual NN: x=213–236, σ=0.10         -->
+<!--   h=36,  top y=409                        -->
+<!-- ══════════════════════════════════════════ -->
+<rect x="185" y="143" width="23" height="302" fill="#264A7A" fill-opacity="0.72" stroke="#00FFFF" stroke-width="1.5" rx="1"/>
+<rect x="213" y="409" width="23" height="36"  fill="#1A1A1A"  stroke="#F4A823" stroke-width="1.5" rx="1"/>
+
+<!-- σ value labels — left of d₁, right of d₂ -->
+<text x="183" y="141" font-family="monospace" font-size="9" fill="#00FFFF" text-anchor="end">σ(d₁)=0.85</text>
+<text x="238" y="407" font-family="monospace" font-size="9" fill="#F4A823">σ(d₂)=0.10</text>
+
+<!-- Upward arrow above d₂ bar at t₁ -->
+<line x1="224" y1="401" x2="224" y2="388" stroke="#F4A823" stroke-width="1.4" opacity="0.65"/>
+<polygon points="224,385 220,393 228,393" fill="#F4A823" opacity="0.65"/>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- t₂  STAGE  — Mid                          -->
+<!-- d₁ Physics Prior: x=338–361, σ=0.86       -->
+<!--   h=305, top y=140                        -->
+<!-- d₂ Residual NN: x=366–389, σ=0.32         -->
+<!--   h=114, top y=331                        -->
+<!-- ══════════════════════════════════════════ -->
+<rect x="338" y="140" width="23" height="305" fill="#264A7A" fill-opacity="0.72" stroke="#00FFFF" stroke-width="1.5" rx="1"/>
+<rect x="366" y="331" width="23" height="114" fill="#1A1A1A"  stroke="#F4A823" stroke-width="1.5" rx="1"/>
+
+<text x="336" y="138" font-family="monospace" font-size="9" fill="#00FFFF" text-anchor="end">σ(d₁)=0.86</text>
+<text x="391" y="329" font-family="monospace" font-size="9" fill="#F4A823">σ(d₂)=0.32</text>
+
+<!-- φ coupling label between the two t₂ bars, at mid-height of d₁ -->
+<text x="350" y="225" font-family="monospace" font-size="9" fill="#E8E8E8" text-anchor="middle" opacity="0.60">φ=0.82</text>
+<line x1="342" y1="229" x2="358" y2="229" stroke="#E8E8E8" stroke-width="0.7" opacity="0.30"/>
+
+<!-- Upward arrow above d₂ bar at t₂ -->
+<line x1="377" y1="323" x2="377" y2="310" stroke="#F4A823" stroke-width="1.4" opacity="0.65"/>
+<polygon points="377,307 373,315 381,315" fill="#F4A823" opacity="0.65"/>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- t₃  STAGE  — Advanced  (Ψ active)         -->
+<!-- d₁ Physics Prior: x=471–494, σ=0.88       -->
+<!--   h=312, top y=133                        -->
+<!-- d₂ Residual NN: x=499–522, σ=0.80         -->
+<!--   h=284, top y=161  — CYAN (σ crystallised)-->
+<!-- ══════════════════════════════════════════ -->
+<rect x="471" y="133" width="23" height="312" fill="#264A7A" fill-opacity="0.85" stroke="#00FFFF" stroke-width="2"   rx="1"/>
+<rect x="499" y="161" width="23" height="284" fill="#00FFFF" fill-opacity="0.11" stroke="#00FFFF" stroke-width="2"   rx="1"/>
+
+<text x="469" y="131" font-family="monospace" font-size="9" fill="#00FFFF" text-anchor="end">σ(d₁)=0.88</text>
+<text x="510" y="157" font-family="monospace" font-size="9" fill="#00FFFF" text-anchor="middle">σ₂=0.80</text>
+
+<!-- Rotated domain labels inside the tall t₃ bars -->
+<!-- Physics Prior bar centre: x=482, vertical centre: (133+445)/2=289 -->
+<text transform="rotate(-90,482,289)" x="482" y="293"
+      font-family="monospace" font-size="7" fill="#00FFFF" fill-opacity="0.40"
+      text-anchor="middle" letter-spacing="1.5">PHYSICS PRIOR</text>
+<!-- Residual NN bar centre: x=510, vertical centre: (161+445)/2=303 -->
+<text transform="rotate(-90,510,303)" x="510" y="307"
+      font-family="monospace" font-size="7" fill="#00FFFF" fill-opacity="0.40"
+      text-anchor="middle" letter-spacing="1.5">RESIDUAL NN</text>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- TRAJECTORY LINES                          -->
+<!-- ══════════════════════════════════════════ -->
+
+<!-- d₁ (Physics Prior) top: nearly flat, small rise -->
+<!-- bar centre-x: t₁=196, t₂=349, t₃=482; tops: 143,140,133 -->
+<path d="M 196 143 L 349 140 L 482 133"
+      fill="none" stroke="#00FFFF" stroke-width="1" stroke-dasharray="4,6" opacity="0.20"/>
+
+<!-- d₂ (Residual NN) top: steeply rising across t₁→t₂→t₃ -->
+<!-- bar centre-x: t₁=224, t₂=377, t₃=510; tops: 409,331,161 -->
+<path d="M 224 409 L 377 331 L 510 161"
+      fill="none" stroke="#F4A823" stroke-width="1.2" stroke-dasharray="4,4" opacity="0.42"/>
+
+<!-- θI CROSSING MARKER on NN trajectory -->
+<!-- Linear interp between (377,331) and (510,161) at y=303:       -->
+<!-- x = 377 + (331−303)/(331−161) × (510−377) = 377+21.7 ≈ 399  -->
+<circle cx="399" cy="303" r="5"   fill="none"    stroke="#00FFFF" stroke-width="1.5"/>
+<circle cx="399" cy="303" r="2.5" fill="#00FFFF"/>
+<!-- Short callout stem -->
+<line x1="399" y1="297" x2="399" y2="283" stroke="#00FFFF" stroke-width="1" stroke-dasharray="2,2" opacity="0.55"/>
+<text x="399" y="279" font-family="monospace" font-size="9" fill="#00FFFF" text-anchor="middle">σ(d₂)→θ<tspan baseline-shift="-30%" font-size="7">I</tspan></text>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- Ψ BURST  —  cx=496, cy=108               -->
+<!-- Placed above t₃ bars (tops at y=133,161)  -->
+<!-- Glow rings, 8 rays, solid core, Ψ symbol  -->
+<!-- ══════════════════════════════════════════ -->
+
+<!-- Glow rings (drawn first, low opacity — discovery box paints over where they overlap) -->
+<circle cx="496" cy="108" r="27" fill="#00FFFF" fill-opacity="0.04"/>
+<circle cx="496" cy="108" r="19" fill="#00FFFF" fill-opacity="0.07"/>
+
+<!-- 8 rays from r_inner=14 to r_outer=26, from cx=496 cy=108 -->
+<!-- 0° E  -->
+<line x1="510" y1="108" x2="522" y2="108" stroke="#00FFFF" stroke-width="2" stroke-linecap="round"/>
+<!-- 45° SE: inner=(505.9,117.9) outer=(514.4,126.4) -->
+<line x1="506" y1="118" x2="514" y2="126" stroke="#00FFFF" stroke-width="2" stroke-linecap="round"/>
+<!-- 90° S -->
+<line x1="496" y1="122" x2="496" y2="134" stroke="#00FFFF" stroke-width="2" stroke-linecap="round"/>
+<!-- 135° SW: inner=(486.1,117.9) outer=(477.6,126.4) -->
+<line x1="486" y1="118" x2="478" y2="126" stroke="#00FFFF" stroke-width="2" stroke-linecap="round"/>
+<!-- 180° W -->
+<line x1="482" y1="108" x2="470" y2="108" stroke="#00FFFF" stroke-width="2" stroke-linecap="round"/>
+<!-- 225° NW: inner=(486.1,98.1) outer=(477.6,89.6) -->
+<line x1="486" y1="98"  x2="478" y2="90"  stroke="#00FFFF" stroke-width="2" stroke-linecap="round"/>
+<!-- 270° N -->
+<line x1="496" y1="94"  x2="496" y2="82"  stroke="#00FFFF" stroke-width="2" stroke-linecap="round"/>
+<!-- 315° NE: inner=(505.9,98.1) outer=(514.4,89.6) -->
+<line x1="506" y1="98"  x2="514" y2="90"  stroke="#00FFFF" stroke-width="2" stroke-linecap="round"/>
+
+<!-- Core — drawn after rays so it masks ray inner stubs -->
+<circle cx="496" cy="108" r="13" fill="#00FFFF" fill-opacity="0.70"/>
+<!-- Ψ symbol: y = cy + font_size×0.35 = 108+5 = 113 for visual centre of uppercase glyph -->
+<text x="496" y="113"
+      font-family="monospace" font-size="14" font-weight="bold"
+      fill="#0D0D0D" text-anchor="middle">Ψ</text>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- CONNECTOR: burst → discovery box          -->
+<!-- East ray tip at x=522, y=108             -->
+<!-- Discovery box left edge at x=536         -->
+<!-- ══════════════════════════════════════════ -->
+<line x1="522" y1="108" x2="531" y2="108" stroke="#00FFFF" stroke-width="1.8"/>
+<polygon points="536,108 527,104 527,112" fill="#00FFFF"/>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- DISCOVERY EVENT BOX                       -->
+<!-- x=536, y=76, w=228, h=100                -->
+<!-- ends x=764, y=176                        -->
+<!-- FAR from legend (ends x=196)             -->
+<!-- ══════════════════════════════════════════ -->
+<rect x="536" y="76" width="228" height="100" fill="#1A1A1A" stroke="#00FFFF" stroke-width="1.5" rx="6"/>
+<!-- Header row -->
+<text x="650" y="95" font-family="monospace" font-size="9" fill="#6B6B6B" text-anchor="middle" letter-spacing="2">DISCOVERY EVENT</text>
+<line x1="544" y1="100" x2="756" y2="100" stroke="#2A2A2A" stroke-width="0.8"/>
+<!-- Main content — two cyan lines, two secondary lines -->
+<text x="650" y="118" font-family="monospace" font-size="13" fill="#00FFFF" text-anchor="middle">Novel Adaptive</text>
+<text x="650" y="134" font-family="monospace" font-size="13" fill="#00FFFF" text-anchor="middle">Control Strategy</text>
+<text x="650" y="151" font-family="sans-serif" font-size="10" fill="#9A9A9A" text-anchor="middle">PIRL  ·  ~20× convergence</text>
+<text x="650" y="165" font-family="sans-serif" font-size="10" fill="#9A9A9A" text-anchor="middle">σ(d₁) × σ(d₂) exceeds θ<tspan baseline-shift="-30%" font-size="8">I</tspan></text>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- TIME + STAGE LABELS                       -->
+<!-- ══════════════════════════════════════════ -->
+<!-- t₁ x-centre: (185+236)/2 = 210 -->
+<text x="210" y="458" font-family="monospace" font-size="13" fill="#9A9A9A" text-anchor="middle">t₁</text>
+<text x="210" y="472" font-family="sans-serif" font-size="10" fill="#6B6B6B" text-anchor="middle">Early</text>
+<!-- t₂ x-centre: (338+389)/2 = 363 -->
+<text x="363" y="458" font-family="monospace" font-size="13" fill="#9A9A9A" text-anchor="middle">t₂</text>
+<text x="363" y="472" font-family="sans-serif" font-size="10" fill="#6B6B6B" text-anchor="middle">Mid</text>
+<!-- t₃ x-centre: (471+522)/2 = 496 — highlighted cyan -->
+<text x="496" y="458" font-family="monospace" font-size="13" fill="#00FFFF" text-anchor="middle">t₃  ·  Ψ</text>
+<text x="496" y="472" font-family="sans-serif" font-size="10" fill="#6B6B6B" text-anchor="middle">Advanced</text>
+
+<!-- Progression arrow along baseline -->
+<line x1="185" y1="449" x2="526" y2="449" stroke="#3A3A3A" stroke-width="1.5"/>
+<polygon points="526,449 517,445 517,453" fill="#3A3A3A"/>
+<text x="355" y="441" font-family="sans-serif" font-size="10" fill="#6B6B6B" text-anchor="middle">AI capability grows  ·  σ(d₂) crystallises  ·  Ψ threshold crossed</text>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- PIRL ANNOTATION BOX                       -->
+<!-- x=30, y=482, w=740, h=52                 -->
+<!-- ══════════════════════════════════════════ -->
+<rect x="30" y="482" width="740" height="52" fill="#1A1A1A" stroke="#3A3A3A" stroke-width="1" rx="6"/>
+<rect x="40" y="494" width="9" height="9" fill="#00FFFF" fill-opacity="0.65" rx="1"/>
+<text x="54" y="502" font-family="monospace" font-size="10" fill="#F2F2F2">d₁  Stribeck friction prior  ·  σ(d₁) injected via physics loss  ·  high σ from t₁</text>
+<rect x="40" y="510" width="9" height="9" fill="#F4A823" rx="1"/>
+<text x="54" y="518" font-family="monospace" font-size="10" fill="#F2F2F2">d₂  Residual NN (64→64)  ·  σ(d₂) develops through training  ·  crosses θ<tspan baseline-shift="-30%" font-size="8">I</tspan> between t₂ and t₃</text>
+<text x="40" y="528" font-family="monospace" font-size="10" fill="#E8E8E8">φ(d₁,d₂)=0.82   ·   Ψ at t₃: ~20× faster convergence  ·  OOD generalisation emerges</text>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- CAPTION BAR                               -->
+<!-- ══════════════════════════════════════════ -->
+<rect x="30" y="542" width="740" height="44" fill="#111111" rx="4"/>
+<text x="400" y="561" font-family="sans-serif" font-size="12" fill="#9A9A9A" text-anchor="middle">Ψ = σ(d₁) × σ(d₂) × φ(d₁,d₂)  ·  active only when both σ values exceed θ<tspan baseline-shift="-30%" font-size="10">I</tspan>  ·  multiplicative not additive</text>
+<text x="400" y="578" font-family="sans-serif" font-size="12" fill="#9A9A9A" text-anchor="middle">Physics prior injects σ(d₁) at init  ·  Residual NN builds σ(d₂) over training  ·  crossing fires discovery</text>
+
+</svg>

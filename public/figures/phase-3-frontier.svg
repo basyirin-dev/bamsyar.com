@@ -1,0 +1,182 @@
+<!-- SYSTEM: axis-stroke #3A3A3A -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <defs>
+    <!-- Mastery domain gradients -->
+    <linearGradient id="gradD2" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#4A4A4A" />
+      <stop offset="30%" stop-color="#8B5E3C" />
+      <stop offset="65%" stop-color="#C47B2B" />
+      <stop offset="85%" stop-color="#E8940A" />
+      <stop offset="100%" stop-color="#F4A823" />
+    </linearGradient>
+
+    <linearGradient id="gradD4" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#4A4A4A" />
+      <stop offset="30%" stop-color="#8B5E3C" />
+      <stop offset="65%" stop-color="#C47B2B" />
+      <stop offset="85%" stop-color="#E8940A" />
+      <stop offset="100%" stop-color="#E8940A" />
+    </linearGradient>
+
+    <!-- Adjacent domain gradient -->
+    <linearGradient id="gradD3" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#4A4A4A" />
+      <stop offset="70%" stop-color="#4A4A4A" />
+      <stop offset="100%" stop-color="#8B5E3C" />
+    </linearGradient>
+
+    <!-- Arc markers -->
+    <marker id="dotArc" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <circle cx="5" cy="5" r="3" fill="#7EC8E3" />
+    </marker>
+    <marker id="arrowArc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#7EC8E3" opacity="0.8" />
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="600" fill="#0D0D0D" />
+
+  <!-- Phase title & Trigger -->
+  <text x="40" y="45" fill="#F2F2F2" font-size="22" font-weight="bold" font-family="'Segoe UI', Arial, sans-serif">
+    PHASE 3 <tspan fill="#CCCCCC" font-weight="normal">— Frontier Asymptote &amp; Domains</tspan>
+  </text>
+  <text x="40" y="68" fill="#9A9A9A" font-size="14" font-family="'Segoe UI', Arial, sans-serif">
+    Triggered: δ<tspan baseline-shift="sub" font-size="10">relative</tspan> > 0.65 in mastery domains
+  </text>
+
+  <!-- Legend / Glossary Block (Shared 4-row template) -->
+  <rect x="560" y="25" width="220" height="100" fill="#111111" stroke="#3A3A3A" stroke-width="1" rx="4"/>
+  <rect x="575" y="40" width="12" height="12" fill="#F4A823" rx="2"/>
+  <text x="595" y="50" font-family="'Courier New', Courier, monospace" font-size="11" fill="#F2F2F2">δ Parametric depth</text>
+  <rect x="575" y="60" width="12" height="12" fill="#264A7A" rx="2"/>
+  <text x="595" y="70" font-family="'Courier New', Courier, monospace" font-size="11" fill="#F2F2F2">D* Delegation floor</text>
+  <rect x="575" y="80" width="12" height="12" fill="#00FFFF" rx="2"/>
+  <text x="595" y="90" font-family="'Courier New', Courier, monospace" font-size="11" fill="#F2F2F2">Ψ Intersection activation</text>
+  <line x1="575" y1="105" x2="587" y2="105" stroke="#E8E8E8" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <text x="595" y="109" font-family="'Courier New', Courier, monospace" font-size="11" fill="#F2F2F2">Δ(d,t) Frontier</text>
+
+  <!-- Y-axis label (rotated) -->
+  <text x="-310" y="35" transform="rotate(-90)" fill="#6B6B6B" font-family="'Segoe UI', Arial, sans-serif" font-size="14" text-anchor="middle">Parametric Depth (δ)</text>
+
+  <g id="chart-body">
+    <!-- Axes -->
+    <line x1="100" y1="120" x2="100" y2="500" stroke="#3A3A3A" stroke-width="1.5" />
+    <line x1="100" y1="500" x2="700" y2="500" stroke="#3A3A3A" stroke-width="1.5" />
+
+    <!-- Y-axis ticks and labels (0.0 - 1.0 scale aligned with Phase 2) -->
+    <line x1="95" y1="500" x2="100" y2="500" stroke="#3A3A3A" stroke-width="1.5" />
+    <text x="85" y="504" font-family="'Courier New', Courier, monospace" font-size="13" fill="#9A9A9A" text-anchor="end">0.0</text>
+    <line x1="95" y1="424" x2="100" y2="424" stroke="#3A3A3A" stroke-width="1.5" />
+    <text x="85" y="428" font-family="'Courier New', Courier, monospace" font-size="13" fill="#9A9A9A" text-anchor="end">0.2</text>
+    <line x1="95" y1="348" x2="100" y2="348" stroke="#3A3A3A" stroke-width="1.5" />
+    <text x="85" y="352" font-family="'Courier New', Courier, monospace" font-size="13" fill="#9A9A9A" text-anchor="end">0.4</text>
+    <line x1="95" y1="272" x2="100" y2="272" stroke="#3A3A3A" stroke-width="1.5" />
+    <text x="85" y="276" font-family="'Courier New', Courier, monospace" font-size="13" fill="#9A9A9A" text-anchor="end">0.6</text>
+    <line x1="95" y1="196" x2="100" y2="196" stroke="#3A3A3A" stroke-width="1.5" />
+    <text x="85" y="200" font-family="'Courier New', Courier, monospace" font-size="13" fill="#9A9A9A" text-anchor="end">0.8</text>
+    <line x1="95" y1="120" x2="100" y2="120" stroke="#3A3A3A" stroke-width="1.5" />
+    <text x="85" y="124" font-family="'Courier New', Courier, monospace" font-size="13" fill="#9A9A9A" text-anchor="end">1.0</text>
+
+    <!-- Frontier dashed line -->
+    <line x1="100" y1="133" x2="700" y2="133" stroke="#E8E8E8" stroke-dasharray="12,6" stroke-width="1.5" />
+    <text x="710" y="137" fill="#E8E8E8" font-size="12" font-family="'Segoe UI', Arial, sans-serif">Frontier Δ(d,t)</text>
+
+    <!-- Mastery threshold dashed line -->
+    <line x1="100" y1="272" x2="700" y2="272" stroke="#6B6B6B" stroke-dasharray="8,4" stroke-width="1.5" />
+    <rect x="106" y="264" width="120" height="16" fill="#0D0D0D" />
+    <text x="108" y="276" font-family="'Segoe UI', Arial, sans-serif" font-size="12" fill="#6B6B6B" text-anchor="start">Mastery threshold</text>
+
+    <!-- ===================== BARS ===================== -->
+    <!-- Grid aligned exactly to Phase 2 (width 68px, spaced 116, 216...) -->
+    <g fill="#4A4A4A">
+      <rect x="116" y="360.9" width="68" height="139.1" rx="2" />
+      <rect x="316" y="337.8" width="68" height="162.2" fill="url(#gradD3)" rx="2" />
+      <rect x="516" y="372.5" width="68" height="127.5" rx="2" />
+      <rect x="616" y="399.6" width="68" height="100.4" rx="2" />
+    </g>
+
+    <g>
+      <rect x="216" y="144.6" width="68" height="355.4" fill="url(#gradD2)" rx="2" />
+      <rect x="416" y="160.0" width="68" height="340.0" fill="url(#gradD4)" rx="2" />
+    </g>
+
+    <!-- Higher contrast delegation overlay (Layer 2) - Width 52px (inset 8px) -->
+    <g fill="#264A7A" fill-opacity="0.95">
+      <rect x="124" y="395.7" width="52" height="104.3" />
+      <rect x="224" y="411.1" width="52" height="88.9" />
+      <rect x="324" y="394.6" width="52" height="105.4" />
+      <rect x="424" y="404.8" width="52" height="95.2" />
+      <rect x="524" y="398.0" width="52" height="102.0" />
+      <rect x="624" y="419.7" width="52" height="80.3" />
+    </g>
+
+    <!-- Delegation boundary lines matching the inset overlays -->
+    <g stroke="#2E5F9E" stroke-width="2" stroke-linecap="square">
+      <line x1="124" y1="395.7" x2="176" y2="395.7" />
+      <line x1="224" y1="411.1" x2="276" y2="411.1" />
+      <line x1="324" y1="394.6" x2="376" y2="394.6" />
+      <line x1="424" y1="404.8" x2="476" y2="404.8" />
+      <line x1="524" y1="398.0" x2="576" y2="398.0" />
+      <line x1="624" y1="419.7" x2="676" y2="419.7" />
+    </g>
+
+    <!-- ===================== DOMAIN LABELS ===================== -->
+    <g stroke="#3A3A3A" stroke-width="1.5">
+      <line x1="150" y1="500" x2="150" y2="505" />
+      <line x1="250" y1="500" x2="250" y2="505" />
+      <line x1="350" y1="500" x2="350" y2="505" />
+      <line x1="450" y1="500" x2="450" y2="505" />
+      <line x1="550" y1="500" x2="550" y2="505" />
+      <line x1="650" y1="500" x2="650" y2="505" />
+    </g>
+
+    <g fill="#CCCCCC" font-size="14" font-weight="600" font-family="'Courier New', Courier, monospace" text-anchor="middle">
+      <text x="150" y="522">D1</text>
+      <text x="250" y="522">D2</text>
+      <text x="350" y="522">D3</text>
+      <text x="450" y="522">D4</text>
+      <text x="550" y="522">D5</text>
+      <text x="650" y="522">D6</text>
+    </g>
+
+    <!-- X-axis label -->
+    <text x="400" y="545" font-family="'Segoe UI', Arial, sans-serif" font-size="12" fill="#6B6B6B" text-anchor="middle">Training Domains</text>
+
+    <!-- ===================== EVENT MARKERS & ARCS ===================== -->
+
+    <!-- Frontier approaching marker above D2 -->
+    <polygon points="247,125 250,121 253,125" fill="#E8E8E8" />
+    <polygon points="247,129 250,125 253,129" fill="#E8E8E8" />
+    <line x1="250" y1="124" x2="250" y2="133" stroke="#E8E8E8" stroke-width="1.5" />
+    <line x1="250" y1="133" x2="250" y2="144.6" stroke="#E8E8E8" stroke-width="1" stroke-dasharray="2,2" />
+
+    <text x="260" y="128" fill="#E8E8E8" font-size="11" font-family="'Segoe UI', Arial, sans-serif">Frontier receding (Δ̇ > 0)</text>
+    <text x="260" y="142" fill="#E8E8E8" font-size="10" font-family="'Segoe UI', Arial, sans-serif">D2 → frontier</text>
+
+    <!-- Cross-domain transfer arc -->
+    <path d="M 250 144.6 Q 350 40 450 160" fill="none" stroke="#7EC8E3" stroke-width="2" stroke-dasharray="8,6" marker-start="url(#dotArc)" marker-end="url(#arrowArc)" opacity="0.8" />
+
+    <text x="350" y="85" fill="#0D0D0D" font-size="13" font-family="'Courier New', Courier, monospace" font-weight="700" text-anchor="middle" stroke="#0D0D0D" stroke-width="3" opacity="0.6">Ψ → activating</text>
+    <text x="350" y="85" fill="#7EC8E3" font-size="13" font-family="'Courier New', Courier, monospace" font-weight="700" text-anchor="middle" opacity="0.8">Ψ → activating</text>
+  </g>
+
+  <!-- ===================== CAPTION ===================== -->
+  <rect x="100" y="555" width="600" height="44" fill="#111111" rx="4"/>
+  <text x="400" y="573" font-family="'Segoe UI', Arial, sans-serif" font-size="12" fill="#9A9A9A" text-anchor="middle">
+    Representations: D2/D4 encode compositional generalizations;
+  </text>
+  <text x="400" y="590" font-family="'Segoe UI', Arial, sans-serif" font-size="12" fill="#9A9A9A" text-anchor="middle">
+    D3 activates cross-domain co-features from both parent domains
+  </text>
+
+  <!-- Cross-phase orientation indicator (Phase 3 = 4th pip) -->
+  <g transform="translate(400, 592)">
+    <circle cx="-32" cy="0" r="4" fill="#3A3A3A" />
+    <circle cx="-16" cy="0" r="4" fill="#3A3A3A" />
+    <circle cx="0"   cy="0" r="4" fill="#3A3A3A" />
+    <circle cx="16"  cy="0" r="4.5" fill="#F2F2F2" />
+    <circle cx="32"  cy="0" r="4" fill="#3A3A3A" />
+  </g>
+
+</svg>

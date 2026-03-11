@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import 'katex/dist/katex.min.css';
 
 /*
   KaTeX CSS is intentionally loaded from CDN here, not bundled via npm import.
@@ -174,7 +175,6 @@ const publishYear = publishDate ? new Date(publishDate).getFullYear().toString()
          Loaded from CDN. Version pinned to match the katex npm package version.
          Verify the version matches package.json before pinning.
     ═══════════════════════════════════════════ -->
-
     <!-- ═══════════════════════════════════════════
          RSS FEED (add this in Stage 4 when articles exist)
     ═══════════════════════════════════════════ -->

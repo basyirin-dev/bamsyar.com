@@ -207,3 +207,65 @@ body {
 .prose svg {
   border-radius: 0.5rem;
 }
+
+/* Responsive SVG scaling inside prose */
+.prose img[src$=".svg"],
+.prose svg {
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  border-radius: 0.5rem;
+  margin: 1.75rem 0;
+}
+
+/* Figure caption styling for MDX images with alt text rendered as caption */
+.prose figure {
+  margin: 2rem 0;
+}
+.prose figcaption {
+  text-align: center;
+  font-size: 0.8rem;
+  color: #525252;
+  margin-top: 0.75rem;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+/* ═══════════════════════════════════════════════════════
+   SHIKI CODE BLOCK OVERRIDES
+   Shiki injects inline styles on <pre> and <code> elements.
+   These rules provide fallbacks and ensure consistency with
+   the prose code block styles defined earlier.
+   ═══════════════════════════════════════════════════════ */
+
+/* Shiki wraps code in <pre class="astro-code ..."> */
+/* Ensure consistent border and radius with prose pre styles */
+pre.astro-code {
+  background-color: #0d1117 !important; /* github-dark background — matches theme */
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  padding: 1.25rem 1.5rem;
+  overflow-x: auto;
+  font-size: 0.85rem;
+  line-height: 1.65;
+  font-family: var(--font-mono);
+  margin: 1.5rem 0;
+}
+
+/* Shiki adds a data-language attribute — use it for language labels */
+pre.astro-code::before {
+  content: attr(data-language);
+  display: block;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #525252;
+  margin-bottom: 0.75rem;
+  font-family: var(--font-mono);
+}
+
+/* Hide the language label when language is 'text' or empty */
+pre.astro-code[data-language="text"]::before,
+pre.astro-code[data-language=""]::before {
+  display: none;
+}
