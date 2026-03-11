@@ -1,0 +1,40 @@
+# Cloudflare Pages _headers
+# Place this file in the public/ directory of your Astro project.
+# Astro copies everything in public/ to dist/ at build time,
+# so Cloudflare Pages will pick it up automatically.
+
+# ─── GLOBAL SECURITY HEADERS ────────────────────────────────────────────────
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  X-XSS-Protection: 1; mode=block
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://giscus.app https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; font-src 'self' https://fonts.bunny.net; img-src 'self' data: https:; frame-src https://giscus.app; connect-src 'self' https://giscus.app https://api.github.com; worker-src 'none'; object-src 'none'; base-uri 'self'
+
+# ─── ASTRO HASHED ASSETS (/_astro/) — aggressive long-term caching ───────────
+# Astro appends a content hash to every bundled asset filename.
+# These files never change at the same URL, so a 1-year cache is safe.
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# ─── STATIC ASSETS ──────────────────────────────────────────────────────────
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/images/*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+# ─── HTML PAGES — short cache, always revalidate ────────────────────────────
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+# ─── SITEMAP AND ROBOTS ─────────────────────────────────────────────────────
+/sitemap-index.xml
+  Cache-Control: public, max-age=3600
+
+/sitemap-0.xml
+  Cache-Control: public, max-age=3600
+
+/robots.txt
+  Cache-Control: public, max-age=86400

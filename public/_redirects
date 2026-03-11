@@ -1,0 +1,28 @@
+# Cloudflare Pages _redirects
+# Place this file in the public/ directory of your Astro project.
+# Syntax: /source  /destination  [status_code]
+# Default status code is 301 (permanent redirect) if omitted.
+
+# ─── TRAILING-SLASH NORMALISATION ───────────────────────────────────────────
+# Astro generates URLs without trailing slashes by default (trailingSlash: 'never').
+# These rules prevent duplicate-content indexing. Add one line per page
+# if you ever publish at a path that Google might crawl with a trailing slash.
+# Example:
+# /articles/  /articles  301
+
+# ─── BAMSYAR.PAGES.DEV → CUSTOM DOMAIN ──────────────────────────────────────
+# After your custom domain is live, redirect the .pages.dev subdomain to avoid
+# duplicate indexing. Cloudflare does not do this automatically.
+# Uncomment the line below only after your custom domain is confirmed working.
+# https://bamsyar.pages.dev/*  https://yourdomain.com/:splat  301
+
+# ─── LEGACY / RENAMED PATHS ─────────────────────────────────────────────────
+# Add redirects here if you rename or move articles after publishing.
+# Never delete a published URL — redirect it. Google Scholar and arXiv
+# citation links are permanent once indexed.
+# Example:
+# /articles/h-bar-model  /articles/h-bar-model-schema-coherence-ai-training  301
+
+# ─── 404 FALLBACK ────────────────────────────────────────────────────────────
+# Cloudflare Pages uses your dist/404.html automatically if it exists.
+# No explicit redirect needed here — Astro generates it from src/pages/404.astro.

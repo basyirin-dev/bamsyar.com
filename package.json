@@ -3,7 +3,7 @@
   "type": "module",
   "version": "0.0.1",
   "engines": {
-    "node": ">=22.12.0"
+    "node": ">=20"
   },
   "scripts": {
     "dev": "astro dev",
@@ -15,6 +15,8 @@
     "@astrojs/mdx": "^4.3.14",
     "@astrojs/react": "^5.0.0",
     "@astrojs/sitemap": "^3.7.1",
+    "@fontsource/inter": "^5.2.8",
+    "@resvg/resvg-js": "^2.6.2",
     "@tailwindcss/typography": "^0.5.19",
     "@tailwindcss/vite": "^4.2.1",
     "astro": "^5.18.1",
@@ -23,6 +25,8 @@
     "react-dom": "^19.2.4",
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0",
+    "satori": "^0.25.0",
+    "sharp-cli": "^5.2.0",
     "tailwindcss": "^4.2.1"
   }
 }
