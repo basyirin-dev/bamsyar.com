@@ -1,0 +1,67 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="1200"
+  height="630"
+  viewBox="0 0 1200 630"
+>
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#0f0f0f" />
+
+  <!-- Violet accent bar — left edge -->
+  <rect x="0" y="140" width="6" height="350" rx="3" fill="#a78bfa" />
+
+  <!-- Grid lines — subtle -->
+  <line x1="0"   y1="210" x2="1200" y2="210" stroke="#1a1a1a" stroke-width="1" />
+  <line x1="0"   y1="420" x2="1200" y2="420" stroke="#1a1a1a" stroke-width="1" />
+  <line x1="400" y1="0"   x2="400"  y2="630" stroke="#1a1a1a" stroke-width="1" />
+  <line x1="800" y1="0"   x2="800"  y2="630" stroke="#1a1a1a" stroke-width="1" />
+
+  <!-- Site domain — top right -->
+  <text
+    x="1120" y="56"
+    text-anchor="end"
+    font-size="18"
+    font-family="ui-sans-serif, system-ui, sans-serif"
+    fill="#404040"
+  >bamsyar.com</text>
+
+  <!-- Author name -->
+  <text
+    x="80" y="240"
+    font-size="64"
+    font-weight="700"
+    font-family="ui-sans-serif, system-ui, sans-serif"
+    fill="#f5f5f5"
+  >Basyirin Amsyar</text>
+
+  <!-- Tagline -->
+  <text
+    x="80" y="306"
+    font-size="26"
+    font-family="ui-sans-serif, system-ui, sans-serif"
+    fill="#a3a3a3"
+  >Schema coherence · AI agent training · Physics-informed ML</text>
+
+  <!-- Decorative σ symbol -->
+  <text
+    x="980" y="400"
+    font-size="220"
+    font-weight="700"
+    font-family="ui-sans-serif, system-ui, sans-serif"
+    fill="#a78bfa"
+    opacity="0.07"
+    text-anchor="middle"
+  >σ</text>
+
+  <!-- Tag: H-Bar Model -->
+  <rect x="80"  y="460" width="140" height="34" rx="17" fill="none" stroke="#a78bfa44" stroke-width="1" />
+  <text x="150" y="482" text-anchor="middle" font-size="14" font-family="ui-sans-serif, system-ui, sans-serif" fill="#a78bfa">H-Bar Model</text>
+
+  <!-- Tag: PIRL -->
+  <rect x="236" y="460" width="80"  height="34" rx="17" fill="none" stroke="#a78bfa44" stroke-width="1" />
+  <text x="276" y="482" text-anchor="middle" font-size="14" font-family="ui-sans-serif, system-ui, sans-serif" fill="#a78bfa">PIRL</text>
+
+  <!-- Tag: Compositional Gen. -->
+  <rect x="332" y="460" width="178" height="34" rx="17" fill="none" stroke="#a78bfa44" stroke-width="1" />
+  <text x="421" y="482" text-anchor="middle" font-size="14" font-family="ui-sans-serif, system-ui, sans-serif" fill="#a78bfa">Compositional Gen.</text>
+</svg>
