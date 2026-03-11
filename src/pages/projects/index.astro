@@ -1,0 +1,107 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import StatusBadge from '../../components/StatusBadge.astro';
+---
+
+<BaseLayout
+  title="Projects — Basyirin Amsyar"
+  description="Active research projects: the H-Bar Model of Knowledge Development and Physics-Informed Residual Learning."
+>
+
+  <div class="mb-10">
+    <h1 class="text-xl font-semibold text-white mb-2">Projects</h1>
+    <p class="text-[#737373] text-sm">Active and recent research work.</p>
+  </div>
+
+  <!-- H-Bar Model -->
+  <article class="mb-10 pb-10 border-b border-[#262626]">
+    <div class="flex items-start justify-between gap-4 mb-3">
+      <h2 class="text-base font-semibold text-white leading-snug">
+        The H-Bar Model of Knowledge Development
+      </h2>
+      <StatusBadge status="in-progress" size="md" />
+    </div>
+
+    <p class="text-sm text-[#a3a3a3] leading-relaxed mb-4 max-w-prose">
+      A formal framework that distinguishes parametric depth (δ) from schema coherence
+      (σ) as independently necessary dimensions of agent capability. The model provides
+      a phase-structured account of how both variables evolve during training, introduces
+      the delegation gradient (𝒟*) and intersection activation (Ψ) mechanisms, and derives
+      a two-component decay decomposition separating cognitive decay (λ_c) from frontier
+      obsolescence (λ_f).
+    </p>
+
+    <p class="text-sm text-[#737373] leading-relaxed mb-5 max-w-prose">
+      The central falsifiable claim is that schema coherence is formally distinct from
+      depth — its absence explains compositional generalization failure and OOD brittleness
+      that depth-maximizing training regimes cannot account for. Physics-Informed Residual
+      Learning (PIRL) serves as the motivating case study.
+    </p>
+
+    <!-- Status details -->
+    <dl class="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm mb-5">
+      <dt class="text-[#525252] font-medium">Status</dt>
+      <dd class="text-[#a3a3a3]">Active writing · formal paper in progress</dd>
+
+      <dt class="text-[#525252] font-medium">Target venue</dt>
+      <dd class="text-[#a3a3a3]">Journal of Artificial Intelligence Research (JAIR)</dd>
+
+      <dt class="text-[#525252] font-medium">Preprint</dt>
+      <dd class="text-[#525252]">In preparation · arXiv cs.AI + cs.LG</dd>
+    </dl>
+
+    <!-- Links — populated progressively -->
+    <div class="flex flex-wrap gap-4 text-sm">
+      <a href="/articles" class="text-[#a78bfa] hover:text-white transition-colors duration-150">
+        Read article →
+      </a>
+      <a href="/papers" class="text-[#525252] hover:text-[#a3a3a3] transition-colors duration-150">
+        View paper entry →
+      </a>
+      <!--
+        When arXiv is live, add:
+        <a href="https://arxiv.org/abs/XXXX.XXXXX" ...>arXiv preprint ↗</a>
+      -->
+    </div>
+  </article>
+
+  <!-- PIRL -->
+  <article class="mb-10">
+    <div class="flex items-start justify-between gap-4 mb-3">
+      <h2 class="text-base font-semibold text-white leading-snug">
+        Physics-Informed Residual Learning (PIRL)
+      </h2>
+      <StatusBadge status="in-progress" size="md" />
+    </div>
+
+    <p class="text-sm text-[#a3a3a3] leading-relaxed mb-4 max-w-prose">
+      Physics-structured neural architectures for adaptive control under distribution
+      shift. PIRL embeds a learned physics prior into the residual structure of a neural
+      network, enabling robust transfer to novel dynamics while maintaining the
+      interpretability properties of the physics baseline.
+    </p>
+
+    <p class="text-sm text-[#737373] leading-relaxed mb-5 max-w-prose">
+      PIRL serves as the empirical motivating case for the H-Bar Model: the architecture
+      instantiates schema coherence (σ) as an injected physics prior rather than a
+      learned representation, and the OOD failure modes of data-only baselines illustrate
+      the cost of δ without σ. The variable mapping between H-Bar formalism and PIRL
+      architecture is fully worked out and documented.
+    </p>
+
+    <dl class="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm mb-5">
+      <dt class="text-[#525252] font-medium">Status</dt>
+      <dd class="text-[#a3a3a3]">Active research</dd>
+
+      <dt class="text-[#525252] font-medium">Role in H-Bar</dt>
+      <dd class="text-[#a3a3a3]">Motivating case study and worked example throughout the paper</dd>
+    </dl>
+
+    <div class="flex flex-wrap gap-4 text-sm">
+      <a href="/papers" class="text-[#525252] hover:text-[#a3a3a3] transition-colors duration-150">
+        View paper entry →
+      </a>
+    </div>
+  </article>
+
+</BaseLayout>

@@ -1,0 +1,114 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import StatusBadge from '../../components/StatusBadge.astro';
+import { getPapersByStatus } from '../../lib/content';
+
+const papersByStatus = await getPapersByStatus();
+
+const sectionLabels: Record<string, string> = {
+  'published':    'Published',
+  'accepted':     'Accepted',
+  'under-review': 'Under Review',
+  'submitted':    'Submitted',
+  'in-progress':  'In Progress',
+};
+
+const totalPapers = [...papersByStatus.values()].reduce((sum, g) => sum + g.length, 0);
+---
+
+<BaseLayout
+  title="Papers — Basyirin Amsyar"
+  description="Formal academic papers on AI systems, schema coherence, and physics-informed machine learning."
+>
+
+  <div class="mb-10">
+    <h1 class="text-xl font-semibold text-white mb-2">Papers</h1>
+    <p class="text-[#737373] text-sm">
+      {totalPapers} paper{totalPapers !== 1 ? 's' : ''} · formal publications and preprints
+    </p>
+  </div>
+
+  {[...papersByStatus.entries()].map(([status, papers]) => (
+    <section class="mb-10">
+
+      <h2 class="text-xs uppercase tracking-widest text-[#525252] mb-5 font-medium pb-2 border-b border-[#1a1a1a]">
+        {sectionLabels[status] ?? status}
+      </h2>
+
+      <div class="space-y-7">
+        {papers.map(p => (
+          <article class="group">
+
+            <div class="flex items-start gap-3 mb-2">
+              <h3 class="text-[#e5e5e5] font-medium text-sm leading-snug flex-1">
+                {p.data.title}
+              </h3>
+              <StatusBadge status={p.data.status} size="sm" />
+            </div>
+
+            <p class="text-xs text-[#525252] mb-2">
+              {p.data.authors.join(', ')} · {p.data.year}
+              {p.data.venue && ` · ${p.data.venue}`}
+            </p>
+
+            <details class="group/abstract">
+              <summary class="cursor-pointer text-sm text-[#737373] leading-relaxed list-none [&::-webkit-details-marker]:hidden">
+                <span class="group-open/abstract:hidden line-clamp-2">
+                  {p.data.abstract}
+                  <span class="text-[#525252] ml-1">… show more</span>
+                </span>
+                <span class="hidden group-open/abstract:block">
+                  {p.data.abstract}
+                  <span class="text-[#525252] ml-1">show less</span>
+                </span>
+              </summary>
+            </details>
+
+            <div class="flex flex-wrap gap-4 mt-3">
+              {p.data.arxivUrl && (
+                <a href={p.data.arxivUrl} target="_blank" rel="noopener noreferrer" class="text-xs text-[#a78bfa] hover:text-white transition-colors duration-150">
+                  arXiv ↗
+                </a>
+              )}
+              {p.data.pdfUrl && (
+                <a href={p.data.pdfUrl} target="_blank" rel="noopener noreferrer" class="text-xs text-[#a3a3a3] hover:text-white transition-colors duration-150">
+                  PDF ↗
+                </a>
+              )}
+              {p.data.doi && (
+                <a href={`https://doi.org/${p.data.doi}`} target="_blank" rel="noopener noreferrer" class="text-xs text-[#a3a3a3] hover:text-white transition-colors duration-150">
+                  DOI ↗
+                </a>
+              )}
+              {p.data.bibtex && (
+                <details class="contents">
+                  <summary class="cursor-pointer text-xs text-[#525252] hover:text-[#a3a3a3] transition-colors duration-150 list-none">
+                    BibTeX
+                  </summary>
+                  <div class="col-span-full mt-2 w-full">
+                    <pre class="bg-[#161616] border border-[#262626] rounded-lg px-4 py-3 text-[0.75rem] text-[#a3a3a3] font-mono overflow-x-auto leading-relaxed whitespace-pre-wrap break-words">{p.data.bibtex}</pre>
+                  </div>
+                </details>
+              )}
+            </div>
+
+            <div class="flex flex-wrap gap-1.5 mt-3">
+              {p.data.tags.map((tag: string) => (
+                <span class="text-[10px] uppercase tracking-wider text-[#525252]">{tag}</span>
+              ))}
+            </div>
+
+          </article>
+        ))}
+      </div>
+
+    </section>
+  ))}
+
+  {totalPapers === 0 && (
+    <p class="text-[#525252] text-sm py-8 text-center">
+      No papers listed yet.
+    </p>
+  )}
+
+</BaseLayout>

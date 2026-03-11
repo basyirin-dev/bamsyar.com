@@ -1,0 +1,27 @@
+---
+interface Props {
+  type?: 'claim' | 'definition' | 'note' | 'warning';
+  title?: string;
+}
+
+const { type = 'note', title } = Astro.props;
+
+const config = {
+  claim:      { border: 'border-violet-700', bg: 'bg-violet-950/30', titleColor: 'text-violet-300', defaultTitle: 'Central Claim'  },
+  definition: { border: 'border-blue-700',   bg: 'bg-blue-950/30',   titleColor: 'text-blue-300',   defaultTitle: 'Definition'      },
+  note:       { border: 'border-gray-700',   bg: 'bg-gray-900/50',   titleColor: 'text-gray-300',   defaultTitle: 'Note'            },
+  warning:    { border: 'border-yellow-700', bg: 'bg-yellow-950/30', titleColor: 'text-yellow-300', defaultTitle: 'Warning'         },
+} as const;
+
+const { border, bg, titleColor, defaultTitle } = config[type];
+const resolvedTitle = title ?? defaultTitle;
+---
+
+<aside class={`my-8 rounded-lg border-l-4 ${border} ${bg} px-5 py-4`}>
+  <p class={`text-xs uppercase tracking-widest font-semibold mb-2 ${titleColor}`}>
+    {resolvedTitle}
+  </p>
+  <div class="text-[#e5e5e5] leading-relaxed text-[0.95rem]">
+    <slot />
+  </div>
+</aside>

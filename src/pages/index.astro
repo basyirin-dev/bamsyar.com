@@ -1,44 +1,139 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import StatusBadge from '../components/StatusBadge.astro';
+import { getFeaturedArticle, getAllPapers } from '../lib/content';
+
+const featuredArticle = await getFeaturedArticle();
+const papers = await getAllPapers();
+const featuredPaper = papers.find(p => p.data.featured) ?? papers[0];
+
+function formatDateCompact(date: Date) {
+  return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+}
 ---
 
 <BaseLayout
   title="Basyirin Amsyar — Research"
   description="Research notes on AI systems, schema coherence, and physics-informed machine learning. Home of the H-Bar Model."
 >
-  <!-- Identity block -->
+
+  <!-- IDENTITY BLOCK -->
   <div class="mb-12">
     <h1 class="text-2xl font-semibold text-white mb-2 tracking-tight">
       Basyirin Amsyar
     </h1>
-    <p class="text-[#a3a3a3] text-base leading-relaxed max-w-xl">
-      Research notes on AI systems, schema coherence, and physics-informed machine learning.
-      Interested in the formal structure of how knowledge develops in both human and artificial agents.
+    <p class="text-[#a3a3a3] text-base leading-relaxed max-w-lg mb-5">
+      Physics-informed learning and formal models of agent knowledge development.
+      Currently working on the H-Bar Model and PIRL.
     </p>
+    <div class="flex gap-3 flex-wrap">
+      <a href="/articles" class="px-4 py-2 bg-[#a78bfa] text-[#0f0f0f] text-sm font-semibold rounded hover:bg-white transition-colors duration-150">
+        Read Articles
+      </a>
+      <a href="/papers" class="px-4 py-2 bg-transparent text-[#a3a3a3] text-sm font-medium rounded border border-[#404040] hover:text-white hover:border-[#737373] transition-colors duration-150">
+        View Research
+      </a>
+    </div>
   </div>
 
-  <!-- Writing section -->
-  <section class="mb-10">
-    <h2 class="text-xs uppercase tracking-widest text-[#525252] mb-5 font-medium">
-      Writing
+  <!-- FEATURED ARTICLE -->
+  {featuredArticle && (
+    <section class="mb-12">
+      <h2 class="text-xs uppercase tracking-widest text-[#525252] mb-4 font-medium">
+        Latest Writing
+      </h2>
+      <a href={`/articles/${featuredArticle.id}`} class="group block bg-[#161616] border border-[#262626] rounded-lg p-5 hover:border-[#404040] transition-colors duration-150">
+        <div class="flex flex-wrap gap-2 mb-3">
+          {featuredArticle.data.tags.slice(0, 3).map(tag => (
+            <span class="text-[10px] uppercase tracking-wider text-[#a78bfa] bg-violet-950/40 border border-violet-800/30 px-1.5 py-0.5 rounded">{tag}</span>
+          ))}
+        </div>
+        <h3 class="text-white font-semibold text-base leading-snug mb-2 group-hover:text-[#a78bfa] transition-colors duration-150">
+          {featuredArticle.data.title}
+        </h3>
+        <p class="text-[#737373] text-sm leading-relaxed mb-3">
+          {featuredArticle.data.description}
+        </p>
+        <div class="flex items-center gap-4 text-xs text-[#525252]">
+          <time datetime={featuredArticle.data.publishDate.toISOString()}>
+            {formatDateCompact(featuredArticle.data.publishDate)}
+          </time>
+          {featuredArticle.data.readingTime && (
+            <span>{featuredArticle.data.readingTime} min read</span>
+          )}
+          {featuredArticle.data.arxivId && (
+            <span class="text-[#a78bfa]">arXiv:{featuredArticle.data.arxivId}</span>
+          )}
+        </div>
+      </a>
+    </section>
+  )}
+
+  <!-- ACTIVE RESEARCH -->
+  <section class="mb-12">
+    <h2 class="text-xs uppercase tracking-widest text-[#525252] mb-4 font-medium">
+      Active Research
     </h2>
-    <p class="text-[#a3a3a3] text-sm">Articles coming soon.</p>
-    <!--
-      In Stage 5, replace this with a dynamic article list built from
-      the Content Collections query. Pattern:
+    <div class="space-y-3">
 
-      const articles = await getCollection('articles', ({ data }) => !data.draft);
-      articles.sort((a, b) => b.data.publishDate - a.data.publishDate);
+      <div class="flex items-start gap-4 py-3 border-b border-[#1a1a1a]">
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-sm font-medium text-white">H-Bar Model</span>
+            <StatusBadge status="in-progress" />
+          </div>
+          <p class="text-sm text-[#737373] leading-relaxed">
+            A formal framework for schema coherence and compositional generalization in AI agents. Targeted at JAIR.
+          </p>
+        </div>
+        <a href="/projects" class="shrink-0 text-xs text-[#525252] hover:text-[#a3a3a3] transition-colors duration-150">
+          Details →
+        </a>
+      </div>
 
-      Then map over articles to render a list of titles + dates.
-    -->
+      <div class="flex items-start gap-4 py-3 border-b border-[#1a1a1a]">
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-sm font-medium text-white">Physics-Informed Residual Learning</span>
+            <StatusBadge status="in-progress" />
+          </div>
+          <p class="text-sm text-[#737373] leading-relaxed">
+            Physics-structured neural architectures for robust adaptive control under distribution shift.
+          </p>
+        </div>
+        <a href="/projects" class="shrink-0 text-xs text-[#525252] hover:text-[#a3a3a3] transition-colors duration-150">
+          Details →
+        </a>
+      </div>
+
+    </div>
   </section>
 
-  <!-- Papers section -->
-  <section>
-    <h2 class="text-xs uppercase tracking-widest text-[#525252] mb-5 font-medium">
-      Papers
-    </h2>
-    <p class="text-[#a3a3a3] text-sm">In preparation.</p>
-  </section>
+  <!-- FEATURED PAPER -->
+  {featuredPaper && (
+    <section>
+      <h2 class="text-xs uppercase tracking-widest text-[#525252] mb-4 font-medium">
+        Research
+      </h2>
+      <div class="bg-[#161616] border border-[#262626] rounded-lg p-5">
+        <div class="flex items-start justify-between gap-4 mb-2">
+          <h3 class="text-white font-medium text-sm leading-snug">
+            {featuredPaper.data.title}
+          </h3>
+          <StatusBadge status={featuredPaper.data.status} />
+        </div>
+        <p class="text-[#737373] text-sm leading-relaxed mb-3 line-clamp-2">
+          {featuredPaper.data.abstract}
+        </p>
+        <div class="flex items-center gap-4 text-xs text-[#525252]">
+          <span>{featuredPaper.data.year}</span>
+          {featuredPaper.data.venue && <span>{featuredPaper.data.venue}</span>}
+          <a href="/papers" class="text-[#a78bfa] hover:text-white transition-colors duration-150">
+            All papers →
+          </a>
+        </div>
+      </div>
+    </section>
+  )}
+
 </BaseLayout>

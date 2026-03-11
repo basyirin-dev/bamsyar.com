@@ -1,0 +1,82 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="About — Basyirin Amsyar"
+  description="Research background, active projects, and contact information."
+>
+
+  <div class="mb-10">
+    <h1 class="text-xl font-semibold text-white mb-2">About</h1>
+  </div>
+
+  <div class="prose prose-invert max-w-none space-y-6">
+
+    <p>
+      I work on the formal structure of learning in AI systems — specifically on
+      how agents develop structured, compositionally valid representations of domain
+      knowledge, and how that development shapes their capacity for robust transfer
+      and cross-domain reasoning.
+    </p>
+
+    <p>
+      My current focus is the <strong>H-Bar Model</strong>, a theoretical framework that
+      formalizes the distinction between parametric depth (δ) and schema coherence (σ)
+      as independently necessary dimensions of agent capability. The framework draws
+      directly on my work in <strong>Physics-Informed Residual Learning (PIRL)</strong>, where
+      the contrast between physics-structured and unstructured neural architectures
+      makes the cost of depth without schema coherence concrete and measurable.
+    </p>
+
+    <p>
+      <!--
+        Update this paragraph with your actual affiliation, programme,
+        and any scholarship or fellowship details when appropriate.
+      -->
+      [Affiliation and programme details. Update before publishing.]
+    </p>
+
+  </div>
+
+  <!-- Contact and links -->
+  <div class="mt-10 pt-8 border-t border-[#262626]">
+    <h2 class="text-xs uppercase tracking-widest text-[#525252] mb-4 font-medium">
+      Contact
+    </h2>
+    <dl class="space-y-2 text-sm">
+      <div class="flex gap-4">
+        <dt class="text-[#525252] w-16 shrink-0">Email</dt>
+        <dd>
+          <a
+            href="mailto:amsyar.basy@gmail.com"
+            class="text-[#a3a3a3] hover:text-white transition-colors duration-150"
+          >
+            amsyar.basy@gmail.com
+          </a>
+        </dd>
+      </div>
+      <div class="flex gap-4">
+        <dt class="text-[#525252] w-16 shrink-0">GitHub</dt>
+        <dd>
+          <a
+            href="https://github.com/basyirin-dev"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-[#a3a3a3] hover:text-white transition-colors duration-150"
+          >
+            github.com/basyirin-dev ↗
+          </a>
+        </dd>
+      </div>
+      <!--
+        Add arXiv profile link when preprint is live (Stage 9):
+        <div class="flex gap-4">
+          <dt class="text-[#525252] w-16 shrink-0">arXiv</dt>
+          <dd><a href="https://arxiv.org/a/YOURID.html" ...>arxiv.org/a/YOURID ↗</a></dd>
+        </div>
+      -->
+    </dl>
+  </div>
+
+</BaseLayout>

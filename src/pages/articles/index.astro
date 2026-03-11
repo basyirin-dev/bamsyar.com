@@ -1,0 +1,144 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getPublishedArticles, getAllArticleTags } from '../../lib/content';
+
+const articles = await getPublishedArticles();
+const allTags = await getAllArticleTags();
+
+function formatDate(date: Date) {
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric', month: 'short', day: 'numeric',
+  });
+}
+---
+
+<BaseLayout
+  title="Articles — Basyirin Amsyar"
+  description="Long-form writing on AI systems, schema coherence, and physics-informed machine learning."
+>
+
+  <div class="mb-8">
+    <h1 class="text-xl font-semibold text-white mb-2">Articles</h1>
+    <p class="text-[#737373] text-sm">
+      {articles.length} article{articles.length !== 1 ? 's' : ''} · formal writing on AI training, schema coherence, and physics-informed ML
+    </p>
+  </div>
+
+  {allTags.length > 0 && (
+    <div class="mb-8 flex flex-wrap gap-2" id="tag-filter">
+      <button data-tag="" data-active class="tag-btn text-[11px] uppercase tracking-wider px-2.5 py-1 rounded border transition-colors duration-150 border-[#a78bfa] text-[#a78bfa] bg-violet-950/30">
+        All
+      </button>
+      {allTags.map(tag => (
+        <button data-tag={tag} class="tag-btn text-[11px] uppercase tracking-wider px-2.5 py-1 rounded border transition-colors duration-150 border-[#262626] text-[#525252] hover:text-[#a3a3a3] hover:border-[#404040]">
+          {tag}
+        </button>
+      ))}
+    </div>
+  )}
+
+  <div class="space-y-0" id="article-list">
+    {articles.map(article => (
+      <article class="article-item py-5 border-b border-[#1a1a1a] last:border-b-0" data-tags={JSON.stringify(article.data.tags)}>
+        <a href={`/articles/${article.id}`} class="group block">
+
+          <div class="flex flex-wrap gap-1.5 mb-2">
+            {article.data.tags.slice(0, 4).map(tag => (
+              <span class="text-[10px] uppercase tracking-wider text-[#a78bfa]">{tag}</span>
+            ))}
+          </div>
+
+          <h2 class="text-base font-medium text-[#e5e5e5] leading-snug mb-1.5 group-hover:text-white transition-colors duration-150">
+            {article.data.title}
+          </h2>
+
+          <p class="text-sm text-[#737373] leading-relaxed mb-3">
+            {article.data.description}
+          </p>
+
+          <div class="flex items-center gap-4 text-xs text-[#525252]">
+            <time datetime={article.data.publishDate.toISOString()}>
+              {formatDate(article.data.publishDate)}
+            </time>
+            {article.data.readingTime && (
+              <span>{article.data.readingTime} min read</span>
+            )}
+            {article.data.arxivId && (
+              <span class="text-[#737373]">arXiv</span>
+            )}
+            {article.data.updatedDate && (
+              <span>Updated {formatDate(article.data.updatedDate)}</span>
+            )}
+          </div>
+
+        </a>
+      </article>
+    ))}
+  </div>
+
+  {articles.length === 0 && (
+    <p class="text-[#525252] text-sm py-8 text-center">
+      No articles published yet. Check back soon.
+    </p>
+  )}
+
+  <p id="no-results" class="hidden text-[#525252] text-sm py-8 text-center">
+    No articles match this tag.
+  </p>
+
+</BaseLayout>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>('.tag-btn');
+  const items   = document.querySelectorAll<HTMLElement>('.article-item');
+  const noResults = document.getElementById('no-results') as HTMLElement;
+
+  const params = new URLSearchParams(window.location.search);
+  const initialTag = params.get('tag') ?? '';
+  if (initialTag) {
+    setActiveTag(initialTag);
+  }
+
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tag = btn.dataset.tag ?? '';
+      setActiveTag(tag);
+      const url = new URL(window.location.href);
+      if (tag) url.searchParams.set('tag', tag);
+      else url.searchParams.delete('tag');
+      window.history.replaceState({}, '', url.toString());
+    });
+  });
+
+  function setActiveTag(tag: string) {
+    buttons.forEach(btn => {
+      const isActive = btn.dataset.tag === tag;
+      if (isActive) {
+        btn.dataset.active = '';
+        btn.className = 'tag-btn text-[11px] uppercase tracking-wider px-2.5 py-1 rounded border transition-colors duration-150 border-[#a78bfa] text-[#a78bfa] bg-violet-950/30';
+      } else {
+        delete btn.dataset.active;
+        btn.className = 'tag-btn text-[11px] uppercase tracking-wider px-2.5 py-1 rounded border transition-colors duration-150 border-[#262626] text-[#525252] hover:text-[#a3a3a3] hover:border-[#404040]';
+      }
+    });
+
+    const anyActive = [...buttons].some(b => 'active' in b.dataset);
+    if (!anyActive) {
+      const allBtn = document.querySelector<HTMLButtonElement>('[data-tag=""]');
+      if (allBtn) {
+        allBtn.dataset.active = '';
+        allBtn.className = 'tag-btn text-[11px] uppercase tracking-wider px-2.5 py-1 rounded border transition-colors duration-150 border-[#a78bfa] text-[#a78bfa] bg-violet-950/30';
+      }
+    }
+
+    let visible = 0;
+    items.forEach(item => {
+      const tags: string[] = JSON.parse(item.dataset.tags ?? '[]');
+      const show = !tag || tags.includes(tag);
+      item.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+
+    noResults.classList.toggle('hidden', visible > 0);
+  }
+</script>

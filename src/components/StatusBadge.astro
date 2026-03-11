@@ -1,0 +1,23 @@
+---
+interface Props {
+  status: 'in-progress' | 'submitted' | 'under-review' | 'accepted' | 'published';
+  size?: 'sm' | 'md';
+}
+
+const { status, size = 'sm' } = Astro.props;
+
+const config = {
+  'in-progress':  { label: 'In Progress',   classes: 'bg-yellow-950/60  text-yellow-400  border-yellow-800/50'  },
+  'submitted':    { label: 'Submitted',      classes: 'bg-blue-950/60    text-blue-400    border-blue-800/50'    },
+  'under-review': { label: 'Under Review',   classes: 'bg-violet-950/60  text-violet-400  border-violet-800/50'  },
+  'accepted':     { label: 'Accepted',       classes: 'bg-emerald-950/60 text-emerald-400 border-emerald-800/50' },
+  'published':    { label: 'Published',      classes: 'bg-emerald-950/60 text-emerald-400 border-emerald-800/50' },
+} as const;
+
+const { label, classes } = config[status];
+const sizeClasses = size === 'md' ? 'px-2.5 py-1 text-xs' : 'px-2 py-0.5 text-[11px]';
+---
+
+<span class={`inline-flex items-center rounded border font-medium tracking-wide ${classes} ${sizeClasses}`}>
+  {label}
+</span>
