@@ -15,6 +15,8 @@ tags:
   - PIRL
   - Formal Methods
 venue: "Journal of Artificial Intelligence Research"
+relatedProjects:
+  - h-bar-model
 featured: true
 bibtex: >
   @unpublished{amsyar2026hbar,

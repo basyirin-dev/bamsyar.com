@@ -65,7 +65,7 @@ export const GET: APIRoute = async ({ props }) => {
           type: 'div',
           props: {
             style: { position: 'absolute', top: 40, right: 80, fontSize: 18, color: '#404040' },
-            children: 'bamsyar.com',
+            children: 'bamsyar.pages.dev',
           },
         },
         // Violet accent bar — left edge

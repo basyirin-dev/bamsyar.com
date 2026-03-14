@@ -36,6 +36,24 @@ export async function getAllArticleTags(): Promise<string[]> {
 }
 
 /**
+ * Returns all published articles that have the specified tag.
+ * Used by tag-specific pages and for server-side tag filtering.
+ */
+export async function getArticlesByTag(tag: string): Promise<CollectionEntry<'articles'>[]> {
+  const articles = await getPublishedArticles();
+  return articles.filter(a => a.data.tags.includes(tag));
+}
+
+/**
+ * Returns all published articles that have any of the specified tags.
+ * Used for multi-tag filtering and cross-tag navigation.
+ */
+export async function getArticlesByTags(tags: string[]): Promise<CollectionEntry<'articles'>[]> {
+  const articles = await getPublishedArticles();
+  return articles.filter(a => a.data.tags.some(t => tags.includes(t)));
+}
+
+/**
  * Returns all published articles that share at least one tag with the
  * given article. Used for "Related articles" links at the bottom of
  * each article page.
@@ -121,6 +139,72 @@ export async function getFeaturedPaper() {
     papers[0] ??
     undefined
   );
+}
+
+// ── PROJECTS ──────────────────────────────────────────────────────────
+
+/**
+ * Returns all projects sorted by status priority (published first,
+ * in-progress last) and then by featured status (featured first).
+ *
+ * Status order:
+ *   published → accepted → under-review → submitted → in-progress
+ *
+ * This ordering matches what a reader expects on a projects page:
+ * completed work first, work-in-progress last.
+ */
+export async function getAllProjects() {
+  const projects = await getCollection('projects');
+  return projects.sort((a, b) => {
+    const statusOrder = {
+      'published':    0,
+      'accepted':     1,
+      'under-review': 2,
+      'submitted':    3,
+      'in-progress':  4,
+    } as const;
+
+    const statusDiff = statusOrder[a.data.status] - statusOrder[b.data.status];
+    if (statusDiff !== 0) return statusDiff;
+
+    // Within same status, featured projects first
+    if (a.data.featured !== b.data.featured) {
+      return b.data.featured ? 1 : -1;
+    }
+
+    return 0;
+  });
+}
+
+/**
+ * Returns the featured project, or the first project if none is
+ * explicitly featured, or undefined if no projects exist.
+ */
+export async function getFeaturedProject() {
+  const projects = await getAllProjects();
+  return (
+    projects.find(p => p.data.featured) ??
+    projects[0] ??
+    undefined
+  );
+}
+
+/**
+ * Returns projects that are related to a specific paper by ID.
+ * Used for showing related projects on paper pages.
+ */
+export async function getRelatedProjects(paperId: string) {
+  const projects = await getAllProjects();
+  return projects.filter(p => p.data.relatedPapers?.includes(paperId));
+}
+
+/**
+ * Returns papers that are related to a specific project by ID.
+ * Used for showing related papers on project pages.
+ */
+export async function getRelatedPapers(projectId: string) {
+  const papers = await getAllPapers();
+  return papers.filter(p => p.data.relatedProjects?.includes(projectId));
 }
 
 // ── CROSS-COLLECTION UTILITIES ────────────────────────────────────────

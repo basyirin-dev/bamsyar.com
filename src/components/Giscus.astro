@@ -2,7 +2,7 @@
 /**
  * src/components/Giscus.astro
  *
- * FIX: the previous version used a <script> tag with {} attribute
+ * FIX: the previous version used a <script> tag with attribute
  * interpolations. Astro sends <script> tags through esbuild, which
  * treats {} as JS syntax — not Astro template expressions — and throws
  * "Unterminated string literal". The correct pattern for third-party
@@ -48,8 +48,8 @@ const giscusScript = `<script
   data-lang="${lang}"
   data-loading="lazy"
   crossorigin="anonymous"
-  async
-></script>`;
+  async>
+</script>`;
 ---
 
 <section

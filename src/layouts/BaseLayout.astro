@@ -25,7 +25,7 @@ interface Props {
 }
 
 const SITE_NAME    = 'Basyirin Amsyar';
-const SITE_URL     = Astro.site ?? 'https://bamsyar.com';
+const SITE_URL     = Astro.site ?? 'https://bamsyar.pages.dev';
 const DEFAULT_DESC = 'Research notes on schema coherence, AI agent training, and physics-informed machine learning.';
 const DEFAULT_OG   = new URL('/og-default.png', SITE_URL).toString();
 const AUTHOR_NAME  = 'Basyirin Amsyar';
@@ -206,20 +206,12 @@ const jsonLdPerson = !article ? JSON.stringify({
     <script type="application/ld+json" set:html={jsonLdPerson} />
   )}
 
-  <!-- ── Fonts (Bunny Fonts — privacy-preserving) ────────────────── -->
+  <!-- ── Fonts (Local @fontsource/inter) ────────────────────────── -->
   <!--
-    Bunny Fonts is the GDPR-compliant alternative to Google Fonts.
-    It mirrors the Google Fonts API with identical URL structure but
-    operates under EU data protection law with no user tracking.
-
-    Loading Inter (400, 500, 600) and IBM Plex Mono (400, 500).
-    display=swap prevents invisible text during font load.
+    Inter font loaded locally via @fontsource/inter package.
+    This eliminates duplicate font loading and ensures consistency
+    between web fonts and Open Graph image generation.
   -->
-  <link rel="preconnect" href="https://fonts.bunny.net" />
-  <link
-    href="https://fonts.bunny.net/css?family=inter:400,500,600|ibm-plex-mono:400,500&display=swap"
-    rel="stylesheet"
-  />
 
   <!-- ── Favicon ─────────────────────────────────────────────────── -->
   <!--
@@ -249,42 +241,56 @@ const jsonLdPerson = !article ? JSON.stringify({
   </a>
 
   <!-- ── Header / Navigation ──────────────────────────────────────── -->
-  <header style="position: sticky; top: 0; z-index: 40; background: rgba(15,15,15,0.95); backdrop-filter: blur(8px); border-bottom: 1px solid #1a1a1a;">
-    <nav style="max-width: 48rem; margin: 0 auto; padding: 0 1.5rem; height: 3.5rem; display: flex; align-items: center; gap: 2rem;">
-      <a href="/" style="color: #f5f5f5; font-weight: 600; font-size: 0.9rem; text-decoration: none;">
+  <header class="sticky top-0 z-40 bg-black/95 backdrop-blur-lg border-b border-gray-800">
+    <nav class="max-w-5xl mx-auto px-6 h-14 flex items-center gap-8" role="navigation" aria-label="Main navigation">
+      <a href="/" class="text-gray-100 font-semibold text-sm tracking-wide">
         Basyirin Amsyar
       </a>
-      <div style="display: flex; gap: 1.5rem; margin-left: auto;">
+      <div class="flex gap-6 ml-auto">
         {[
           { href: '/articles', label: 'Articles' },
           { href: '/papers',   label: 'Papers'   },
           { href: '/projects', label: 'Projects' },
           { href: '/about',    label: 'About'    },
-        ].map(({ href, label }) => (
-          <a
-            href={href}
-            style="color: #737373; font-size: 0.875rem; text-decoration: none;"
-          >
-            {label}
-          </a>
-        ))}
+        ].map(({ href, label }) => {
+          const isActive = Astro.url.pathname.startsWith(href);
+          return (
+            <a
+              href={href}
+              class={`text-sm font-medium transition-colors duration-200 ${
+                isActive
+                  ? 'text-purple-400 hover:text-purple-300'
+                  : 'text-gray-500 hover:text-gray-300'
+              }`}
+              aria-current={isActive ? "page" : undefined}
+            >
+              {label}
+            </a>
+          );
+        })}
       </div>
     </nav>
   </header>
 
   <!-- ── Main content ─────────────────────────────────────────────── -->
-  <main id="main-content" style="max-width: 42rem; margin: 0 auto; padding: 3rem 1.5rem; width: 100%; flex: 1;">
+  <main id="main-content" class="max-w-5xl mx-auto px-6 py-12 w-full flex-1">
     <slot />
   </main>
 
   <!-- ── Footer ───────────────────────────────────────────────────── -->
-  <footer style="border-top: 1px solid #1a1a1a; padding: 2rem 1.5rem;">
-    <div style="max-width: 42rem; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.75rem; font-size: 0.8rem; color: #525252;">
+  <footer class="border-t border-gray-800 py-8 px-6">
+    <div class="max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-3 text-xs text-gray-500">
       <span>© {new Date().getFullYear()} Basyirin Amsyar</span>
-      <div style="display: flex; gap: 1.25rem;">
-        <a href="https://github.com/bamsyar"                     style="color: #525252; text-decoration: none;">GitHub</a>
-        <a href="https://arxiv.org/search/?searchtype=author&query=Amsyar" style="color: #525252; text-decoration: none;">arXiv</a>
-        <a href="mailto:bamsyar@example.com"                     style="color: #525252; text-decoration: none;">Contact</a>
+      <div class="flex gap-5">
+        <a href="https://github.com/bamsyar" class="text-gray-500 hover:text-gray-300 transition-colors">
+          GitHub
+        </a>
+        <a href="https://arxiv.org/search/?searchtype=author&query=Amsyar" class="text-gray-500 hover:text-gray-300 transition-colors">
+          arXiv
+        </a>
+        <a href="mailto:bamsyar@example.com" class="text-gray-500 hover:text-gray-300 transition-colors">
+          Contact
+        </a>
       </div>
     </div>
   </footer>

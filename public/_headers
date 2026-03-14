@@ -10,7 +10,7 @@
   X-XSS-Protection: 1; mode=block
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://giscus.app https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; font-src 'self' https://fonts.bunny.net; img-src 'self' data: https:; frame-src https://giscus.app; connect-src 'self' https://giscus.app https://api.github.com; worker-src 'none'; object-src 'none'; base-uri 'self'
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-oKd+5GyeiOOjE6wEYVk1GU4Dnp78DKzpkS4PEU5E4q0=' 'sha256-FqKgM7EsRIPt3eGYrkVaJQzQa7oUpsCZVS/cS5KDvqU=' https://giscus.app; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; font-src 'self' https://fonts.bunny.net; img-src 'self' data: https:; frame-src https://giscus.app; connect-src 'self' https://giscus.app https://api.github.com; worker-src 'none'; object-src 'none'; base-uri 'self'
 
 # ─── ASTRO HASHED ASSETS (/_astro/) — aggressive long-term caching ───────────
 # Astro appends a content hash to every bundled asset filename.

@@ -4,22 +4,13 @@
  *
  * Complete article layout: header meta, prose body, BibTeX block,
  * Giscus comment section. Replaces the Stage 3 skeleton.
- *
- * Replace the four GISCUS_* constants below with your values from
- * https://giscus.app before deploying.
  */
 
 import type { CollectionEntry } from 'astro:content';
-import { render } from 'astro:content';
 import BaseLayout from './BaseLayout.astro';
 import Giscus from '../components/Giscus.astro';
-
-// ── Giscus config — fill from https://giscus.app ─────────────────────
-// These four constants are the only values you need to change.
-const GISCUS_REPO          = 'basyirin-dev/bamsyar.com';          // your-username/repo
-const GISCUS_REPO_ID       = 'R_kgDORjZ2Zg';                 // from giscus.app
-const GISCUS_CATEGORY      = 'Announcements';                 // your chosen category
-const GISCUS_CATEGORY_ID   = 'DIC_kwDORjZ2Zs4C4GAP';               // from giscus.app
+import TableOfContents from '../components/TableOfContents.astro';
+import { giscus } from '../config';
 
 interface Props {
   entry: CollectionEntry<'articles'>;
@@ -28,14 +19,11 @@ interface Props {
 const { entry } = Astro.props;
 const { title, description, publishDate, updatedDate, tags, arxivId, readingTime } = entry.data;
 
-// Rendered MDX body
-const { Content } = await render(entry);
-
 // Canonical URL for this article
 const canonicalURL = new URL(`/articles/${entry.id}`, Astro.site);
 
-// OG image: per-article dynamic path if it exists, else default
-const ogImage = new URL(`/og/${entry.id}.png`, Astro.site).toString();
+// OG image: use entry.data.ogImage if provided, otherwise use generated path
+const ogImage = entry.data.ogImage || new URL(`/og/${entry.id}.png`, Astro.site).toString();
 
 // Formatted dates
 const pubDateISO      = publishDate.toISOString();
@@ -78,7 +66,9 @@ const bibtex = arxivId
   ogImage={ogImage}
 >
 
-  <article>
+  <div class="max-w-6xl mx-auto px-4 lg:px-6">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <article class="lg:col-span-3">
 
     <!-- ── Article header ──────────────────────────────────────────── -->
     <header style="margin-bottom: 2.5rem;">
@@ -133,7 +123,7 @@ const bibtex = arxivId
 
     <!-- ── Article body ─────────────────────────────────────────────── -->
     <div class="prose prose-invert max-w-none">
-      <Content />
+      <slot />
     </div>
 
     <!-- ── Article footer ──────────────────────────────────────────── -->
@@ -160,6 +150,14 @@ const bibtex = arxivId
 
   </article>
 
+  <!-- ── Table of Contents ───────────────────────────────────────── -->
+  <aside class="lg:col-span-1">
+    <TableOfContents entry={entry} />
+  </aside>
+
+</div>
+  </div>
+
   <!-- ── Giscus comments ─────────────────────────────────────────── -->
   <!--
     Placed outside <article> so the discussion section is semantically
@@ -167,10 +165,10 @@ const bibtex = arxivId
     outlines benefit from this separation.
   -->
   <Giscus
-    repo={GISCUS_REPO}
-    repoId={GISCUS_REPO_ID}
-    category={GISCUS_CATEGORY}
-    categoryId={GISCUS_CATEGORY_ID}
+    repo={giscus.repo}
+    repoId={giscus.repoId}
+    category={giscus.category}
+    categoryId={giscus.categoryId}
   />
 
 </BaseLayout>

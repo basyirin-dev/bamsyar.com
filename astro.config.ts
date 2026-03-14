@@ -5,6 +5,8 @@ import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
+import rehypeSlug from 'rehype-slug';
+import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 
 export default defineConfig({
   /*
@@ -58,6 +60,27 @@ export default defineConfig({
     ],
 
     rehypePlugins: [
+      /*
+        rehype-slug adds unique IDs to all heading elements (h1-h6).
+        This enables deep-linking to specific sections and is required
+        for the table of contents component to generate anchor links.
+      */
+      rehypeSlug,
+
+      /*
+        rehype-autolink-headings adds anchor links to all headings.
+        When users hover over a heading, a link icon appears that
+        allows direct linking to that section. This is standard for
+        academic documentation and improves user experience.
+      */
+      [rehypeAutolinkHeadings, {
+        behavior: 'wrap',
+        properties: {
+          className: ['anchor-link'],
+          ariaLabel: 'Link to section',
+        },
+      }],
+
       /*
         rehype-katex v7 (matching package.json: "rehype-katex": "^7.0.1")
         Consumes math AST nodes produced by remark-math and renders

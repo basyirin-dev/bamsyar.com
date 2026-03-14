@@ -1,0 +1,52 @@
+---
+/**
+ * TableOfContents.astro
+ *
+ * Generates a dynamic table of contents for long-form articles.
+ * Automatically extracts headings from the current article and creates
+ * anchor-based navigation with scroll highlighting.
+ */
+
+import type { CollectionEntry } from 'astro:content';
+import { render } from 'astro:content';
+
+interface Props {
+  entry: CollectionEntry<'articles'>;
+}
+
+const { entry } = Astro.props;
+
+// Extract headings from the article content
+// The render() function returns a headings array with the extracted headings
+const content = await render(entry);
+const headings = content.headings || [];
+
+// Filter out headings that are too deep (beyond h3) to keep TOC manageable
+const filteredHeadings = headings.filter(h => h.depth <= 3);
+
+// Check if we have enough headings to show a TOC
+const shouldShowTOC = filteredHeadings.length >= 3;
+
+---
+
+{shouldShowTOC ? (
+  <aside class="sticky top-6 space-y-4" aria-label="Table of contents">
+    <div class="bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg p-4">
+      <h2 class="text-sm font-semibold text-[#a3a3a3] uppercase tracking-wider mb-3 border-b border-[#2a2a2a] pb-2">
+        On this page
+      </h2>
+
+      <nav class="space-y-1">
+        {filteredHeadings.map(heading => (
+          <a
+            href={`#${heading.slug}`}
+            class="block text-sm text-[#e5e5e5] hover:text-[#a78bfa] transition-colors duration-200 truncate py-1 px-1 rounded"
+          >
+            <span class="inline-block w-2 h-2 bg-[#2a2a2a] rounded-full mr-3 mt-0.5" aria-hidden="true"></span>
+            {heading.text}
+          </a>
+        ))}
+      </nav>
+    </div>
+  </aside>
+) : null}

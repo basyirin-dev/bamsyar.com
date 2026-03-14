@@ -1,6 +1,11 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+/* Import Inter font from @fontsource/inter package */
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
+
 /*
   DESIGN TOKENS
   All tokens defined here are accessible as CSS variables throughout the project

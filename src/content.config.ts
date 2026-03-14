@@ -352,6 +352,109 @@ const papers = defineCollection({
 
 
 // ═══════════════════════════════════════════
+// PROJECTS COLLECTION
+//
+// Covers: Active research projects and initiatives.
+// Each project represents a distinct research direction or system.
+// Projects are rendered on the projects page and can link to related papers.
+//
+// File format: .md (not .mdx). Project entries are data records
+// rendered by the projects page template, not self-rendering documents.
+// This keeps them portable and editable outside the Astro context.
+// ═══════════════════════════════════════════
+const projects = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/projects' }),
+  schema: z.object({
+
+    // ── REQUIRED CORE FIELDS ──────────────────────────────────────────
+
+    /**
+     * Full project title as it appears in the page header and links.
+     * Should match the project name used throughout the site.
+     */
+    title: z.string().min(1),
+
+    /**
+     * Project status. This drives the StatusBadge component and
+     * determines display order on the projects page.
+     *
+     * Status values must match the StatusBadge enum:
+     *   "in-progress"  → Active development
+     *   "submitted"    → Submitted for review/publication
+     *   "under-review" → Under review
+     *   "accepted"     → Accepted/published
+     *   "published"    → Published/complete
+     *
+     * This ensures consistency across the site and prevents
+     * hardcoded status mismatches between projects and papers.
+     */
+    status: z.enum([
+      'in-progress',
+      'submitted',
+      'under-review',
+      'accepted',
+      'published',
+    ]),
+
+    /**
+     * Short project description (1-2 sentences).
+     * Displayed as the project subtitle on the projects page.
+     * Should provide a concise overview of the project's purpose.
+     */
+    description: z.string().min(1),
+
+    /**
+     * Detailed project description in Markdown.
+     * Contains the full project narrative, motivation, and scope.
+     * This replaces the hardcoded HTML prose in the current projects page.
+     */
+    details: z.string().min(1),
+
+    /**
+     * Tags for categorization and cross-linking with articles/papers.
+     * Use the same tag vocabulary as other collections for consistency.
+     * Examples: "H-Bar Model", "Schema Coherence", "PIRL", etc.
+     */
+    tags: tagsSchema,
+
+    // ── OPTIONAL FIELDS ──────────────────────────────────────────────
+
+    /**
+     * Project start date. Used for timeline display and sorting.
+     * Format: ISO 8601 date string in frontmatter.
+     */
+    startDate: z.coerce.date().optional(),
+
+    /**
+     * Project end date (if completed). Used for timeline display.
+     * Format: ISO 8601 date string in frontmatter.
+     */
+    endDate: z.coerce.date().optional(),
+
+    /**
+     * Link to related papers. Array of paper collection IDs.
+     * Enables bidirectional linking between projects and their
+     * associated formal publications.
+     * Example: ["h-bar-model"]
+     */
+    relatedPapers: z.array(z.string()).optional(),
+
+    /**
+     * Whether to feature this project prominently on the projects page.
+     * Use sparingly - typically for the most significant active projects.
+     */
+    featured: z.boolean().default(false),
+
+    /**
+     * Project URL (website, demo, or repository).
+     * Optional link for external project resources.
+     */
+    url: urlSchema,
+  }),
+});
+
+
+// ═══════════════════════════════════════════
 // EXPORT
 // ═══════════════════════════════════════════
-export const collections = { articles, papers };
+export const collections = { articles, papers, projects };

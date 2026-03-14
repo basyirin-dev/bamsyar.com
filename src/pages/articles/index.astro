@@ -26,13 +26,16 @@ function formatDate(date: Date) {
 
   {allTags.length > 0 && (
     <div class="mb-8 flex flex-wrap gap-2" id="tag-filter">
-      <button data-tag="" data-active class="tag-btn text-[11px] uppercase tracking-wider px-2.5 py-1 rounded border transition-colors duration-150 border-[#a78bfa] text-[#a78bfa] bg-violet-950/30">
+      <a href="/articles" class="tag-btn text-[11px] uppercase tracking-wider px-2.5 py-1 rounded border transition-colors duration-150 border-[#a78bfa] text-[#a78bfa] bg-violet-950/30">
         All
-      </button>
-      {allTags.map(tag => (
-        <button data-tag={tag} class="tag-btn text-[11px] uppercase tracking-wider px-2.5 py-1 rounded border transition-colors duration-150 border-[#262626] text-[#525252] hover:text-[#a3a3a3] hover:border-[#404040]">
-          {tag}
-        </button>
+      </a>
+      {allTags.map(t => (
+        <a
+          href={`/articles/tags/${t}`}
+          class="tag-btn text-[11px] uppercase tracking-wider px-2.5 py-1 rounded border transition-colors duration-150 border-[#262626] text-[#525252] hover:text-[#a3a3a3] hover:border-[#404040]"
+        >
+          {t}
+        </a>
       ))}
     </div>
   )}
@@ -89,56 +92,68 @@ function formatDate(date: Date) {
 </BaseLayout>
 
 <script>
-  const buttons = document.querySelectorAll<HTMLButtonElement>('.tag-btn');
-  const items   = document.querySelectorAll<HTMLElement>('.article-item');
+  const links = document.querySelectorAll<HTMLAnchorElement>('.tag-btn');
+  const items = document.querySelectorAll<HTMLElement>('.article-item');
   const noResults = document.getElementById('no-results') as HTMLElement;
 
   const params = new URLSearchParams(window.location.search);
   const initialTag = params.get('tag') ?? '';
+
+  // Highlight current tag if using URL parameter filtering
   if (initialTag) {
     setActiveTag(initialTag);
   }
 
-  buttons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const tag = btn.dataset.tag ?? '';
-      setActiveTag(tag);
+  // Add click handlers for client-side filtering (backward compatibility)
+  links.forEach(link => {
+    link.addEventListener('click', (e) => {
+      // Only handle client-side filtering if not navigating to tag page
+      const tag = link.href.split('/').pop() || '';
+      if (tag && tag !== 'articles') {
+        // User is clicking a tag link - let navigation happen
+        return;
+      }
+
+      // Handle "All" link or other cases
+      e.preventDefault();
+      const tagParam = link.textContent?.trim() === 'All' ? '' : link.textContent?.trim() || '';
+      setActiveTag(tagParam);
       const url = new URL(window.location.href);
-      if (tag) url.searchParams.set('tag', tag);
+      if (tagParam) url.searchParams.set('tag', tagParam);
       else url.searchParams.delete('tag');
       window.history.replaceState({}, '', url.toString());
     });
   });
 
   function setActiveTag(tag: string) {
-    buttons.forEach(btn => {
-      const isActive = btn.dataset.tag === tag;
+    // For URL parameter filtering, highlight the matching link
+    links.forEach(link => {
+      const linkText = link.textContent?.trim() || '';
+      const isActive = (linkText === 'All' && !tag) || (linkText === tag);
+
       if (isActive) {
-        btn.dataset.active = '';
-        btn.className = 'tag-btn text-[11px] uppercase tracking-wider px-2.5 py-1 rounded border transition-colors duration-150 border-[#a78bfa] text-[#a78bfa] bg-violet-950/30';
+        link.className = 'tag-btn text-[11px] uppercase tracking-wider px-2.5 py-1 rounded border transition-colors duration-150 border-[#a78bfa] text-[#a78bfa] bg-violet-950/30';
       } else {
-        delete btn.dataset.active;
-        btn.className = 'tag-btn text-[11px] uppercase tracking-wider px-2.5 py-1 rounded border transition-colors duration-150 border-[#262626] text-[#525252] hover:text-[#a3a3a3] hover:border-[#404040]';
+        link.className = 'tag-btn text-[11px] uppercase tracking-wider px-2.5 py-1 rounded border transition-colors duration-150 border-[#262626] text-[#525252] hover:text-[#a3a3a3] hover:border-[#404040]';
       }
     });
 
-    const anyActive = [...buttons].some(b => 'active' in b.dataset);
-    if (!anyActive) {
-      const allBtn = document.querySelector<HTMLButtonElement>('[data-tag=""]');
-      if (allBtn) {
-        allBtn.dataset.active = '';
-        allBtn.className = 'tag-btn text-[11px] uppercase tracking-wider px-2.5 py-1 rounded border transition-colors duration-150 border-[#a78bfa] text-[#a78bfa] bg-violet-950/30';
-      }
+    // Apply client-side filtering if using URL parameters
+    if (tag) {
+      let visible = 0;
+      items.forEach(item => {
+        const tags: string[] = JSON.parse(item.dataset.tags ?? '[]');
+        const show = tags.includes(tag);
+        item.style.display = show ? '' : 'none';
+        if (show) visible++;
+      });
+      noResults.classList.toggle('hidden', visible > 0);
+    } else {
+      // Show all items
+      items.forEach(item => {
+        item.style.display = '';
+      });
+      noResults.classList.add('hidden');
     }
-
-    let visible = 0;
-    items.forEach(item => {
-      const tags: string[] = JSON.parse(item.dataset.tags ?? '[]');
-      const show = !tag || tags.includes(tag);
-      item.style.display = show ? '' : 'none';
-      if (show) visible++;
-    });
-
-    noResults.classList.toggle('hidden', visible > 0);
   }
 </script>
