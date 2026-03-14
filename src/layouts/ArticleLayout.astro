@@ -14,10 +14,12 @@ import { giscus } from '../config';
 
 interface Props {
   entry: CollectionEntry<'articles'>;
+  readingTime?: number;
 }
 
-const { entry } = Astro.props;
-const { title, description, publishDate, updatedDate, tags, arxivId, readingTime } = entry.data;
+const { entry, readingTime } = Astro.props;
+const { title, description, publishDate, updatedDate, tags, arxivId } = entry.data;
+
 
 // Canonical URL for this article
 const canonicalURL = new URL(`/articles/${entry.id}`, Astro.site);

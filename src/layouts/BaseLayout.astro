@@ -10,6 +10,7 @@
 
 import '../styles/global.css';
 import 'katex/dist/katex.min.css';
+import { site } from '../config';
 
 interface Props {
   title:        string;
@@ -24,11 +25,11 @@ interface Props {
   ogImage?:     string;
 }
 
-const SITE_NAME    = 'Basyirin Amsyar';
-const SITE_URL     = Astro.site ?? 'https://bamsyar.pages.dev';
-const DEFAULT_DESC = 'Research notes on schema coherence, AI agent training, and physics-informed machine learning.';
-const DEFAULT_OG   = new URL('/og-default.png', SITE_URL).toString();
-const AUTHOR_NAME  = 'Basyirin Amsyar';
+const SITE_NAME    = site.title;
+const SITE_URL     = site.url;
+const DEFAULT_DESC = site.description;
+const DEFAULT_OG   = new URL(site.defaultOgImage, SITE_URL).toString();
+const AUTHOR_NAME  = site.author;
 
 const {
   title,

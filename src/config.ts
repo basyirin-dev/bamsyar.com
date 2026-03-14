@@ -6,6 +6,26 @@
  */
 
 /**
+ * Site metadata configuration
+ */
+export const site = {
+  /** Site title */
+  title: 'Basyirin Amsyar',
+
+  /** Site description */
+  description: 'Research notes on schema coherence, AI agent training, and physics-informed machine learning.',
+
+  /** Base URL of the site */
+  url: 'https://bamsyar.com',
+
+  /** Default Open Graph image path */
+  defaultOgImage: '/og-default.png',
+
+  /** Author name */
+  author: 'Basyirin Amsyar',
+} as const;
+
+/**
  * Giscus comment system configuration
  *
  * Configure the Giscus comment system for articles.
@@ -32,18 +52,4 @@ export const giscus = {
 
   /** Language for the comment widget */
   lang: 'en' as const,
-} as const;
-
-/**
- * Site metadata configuration
- */
-export const site = {
-  /** Site title */
-  title: 'Basyirin Amsyar',
-
-  /** Site description */
-  description: 'Research blog and personal website',
-
-  /** Base URL of the site */
-  url: 'https://bamsyar.com',
 } as const;

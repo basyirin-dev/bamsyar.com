@@ -141,22 +141,6 @@ const articles = defineCollection({
      */
     draft: z.boolean().default(false),
 
-    /**
-     * Estimated reading time in minutes.
-     * Displayed in the article header: "X min read".
-     *
-     * This field is intentionally manual rather than auto-computed.
-     * Auto-computation requires a remark plugin that measures raw word
-     * count — workable, but adds build complexity before it is needed.
-     * For now: compute manually (word count ÷ 250 words/min, rounded up)
-     * and set the field in frontmatter.
-     *
-     * Install the `reading-time` npm package and a remark plugin in
-     * Stage 5 if you want to automate this. At that point, remove this
-     * field from the schema and source it from the remark plugin's
-     * injected frontmatter instead.
-     */
-    readingTime: z.number().int().positive().optional(),
 
     /**
      * A custom hero/OG image path relative to the `public/` directory.
@@ -176,6 +160,13 @@ const articles = defineCollection({
      * featured article found — no deduplication logic required.
      */
     featured: z.boolean().default(false),
+
+    /**
+     * Reading time in minutes, automatically calculated from article content.
+     * This field is populated by the remark-reading-time plugin and should
+     * not be manually set in frontmatter.
+     */
+    readingTime: z.number().optional(),
   }),
 });
 

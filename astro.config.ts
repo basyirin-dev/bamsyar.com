@@ -7,6 +7,7 @@ import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import rehypeSlug from 'rehype-slug';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
+import { site } from './src/config';
 
 export default defineConfig({
   /*
@@ -20,7 +21,7 @@ export default defineConfig({
     Update this to your final custom domain before Stage 8.
     Until then, the Cloudflare Pages preview URL is correct here.
   */
-  site: 'https://bamsyar.pages.dev',
+  site: site.url,
 
   /*
     Integration order matters:
