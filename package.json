@@ -6,15 +6,18 @@
     "node": ">=20"
   },
   "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
+    "dev": "npm run copy-fonts && astro dev",
+    "build": "npm run copy-fonts && astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "copy-fonts": "cp node_modules/@fontsource/inter/files/inter-latin-*-normal.woff2 public/fonts/ && cp node_modules/@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-*-normal.woff2 public/fonts/",
+    "generate:og-default": "node scripts/generate-og-default.js"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.14",
     "@astrojs/react": "^5.0.0",
     "@astrojs/sitemap": "^3.7.1",
+    "@fontsource/ibm-plex-mono": "^5.2.7",
     "@fontsource/inter": "^5.2.8",
     "@resvg/resvg-js": "^2.6.2",
     "@tailwindcss/typography": "^0.5.19",

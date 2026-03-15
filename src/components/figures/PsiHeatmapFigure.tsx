@@ -5,28 +5,28 @@
 // Hydration: client:visible
 
 import { useState } from "react";
+import { COLORS, PARAMETERS, THRESHOLDS } from "./tokens";
 
 // ── Design tokens ────────────────────────────────────────────────────
-const SURFACE   = "#111111";
-const RAISED    = "#1c1c1c";
-const BORDER    = "#2a2a2a";
-const ACCENT    = "#a78bfa";
-const SECONDARY = "#93c5fd";
-const EMERALD   = "#34d399";
-const ROSE      = "#f87171";
-const MUTED     = "#525252";
-const TEXT_MAIN = "#e5e5e5";
-const TEXT_DIM  = "#a3a3a3";
+const {
+  SURFACE,
+  RAISED,
+  BORDER,
+  ACCENT,
+  SECONDARY,
+  EMERALD,
+  ROSE,
+  MUTED,
+  TEXT_MAIN,
+  TEXT_DIM,
+} = COLORS;
 
 // ── Parameters ───────────────────────────────────────────────────────
-const THETA_I    = 0.18;   // σ₁ × σ₂ threshold for Ψ > 0
-const GRID_N     = 12;     // resolution of heatmap grid
-const PSI_0      = 1.0;    // normalisation constant (visual scale)
-const PHI        = 0.75;   // structural similarity φ(d₁, d₂) — fixed in this figure
+const { GRID_N, PSI_0, PHI } = PARAMETERS;
+const { THETA_I } = THRESHOLDS;
 
 // ── Canvas ────────────────────────────────────────────────────────────
-const CELL_W  = 28;
-const CELL_H  = 28;
+const { CELL_W, CELL_H } = PARAMETERS;
 const PAD     = { top: 36, right: 20, bottom: 48, left: 52 };
 const GRID_PX_W = GRID_N * CELL_W;
 const GRID_PX_H = GRID_N * CELL_H;
@@ -279,11 +279,11 @@ export default function PsiHeatmapFigure() {
           <>
             <div style={{ display: "flex", gap: "1.25rem", flexWrap: "wrap", marginBottom: "0.4rem" }}>
               {[
-                { label: "σ(d₁)", val: activePsi.σ1.toFixed(2) },
-                { label: "σ(d₂)", val: activePsi.σ2.toFixed(2) },
-                { label: "σ₁ × σ₂", val: (activePsi.σ1 * activePsi.σ2).toFixed(3) },
-                { label: "Ψ (multiplicative)", val: activePsi.ψ.toFixed(3), color: activePsi.ψ > 0 ? ACCENT : ROSE },
-                { label: "Ψ (additive baseline)", val: activePsi.ψAdditive.toFixed(3), color: TEXT_DIM },
+                { label: "σ(d₁)", val: activePsi ? activePsi.σ1.toFixed(2) : "—" },
+                { label: "σ(d₂)", val: activePsi ? activePsi.σ2.toFixed(2) : "—" },
+                { label: "σ₁ × σ₂", val: activePsi ? (activePsi.σ1 * activePsi.σ2).toFixed(3) : "—" },
+                { label: "Ψ (multiplicative)", val: activePsi ? activePsi.ψ.toFixed(3) : "—", color: activePsi && activePsi.ψ > 0 ? ACCENT : ROSE },
+                { label: "Ψ (additive baseline)", val: activePsi ? activePsi.ψAdditive.toFixed(3) : "—", color: TEXT_DIM },
               ].map(item => (
                 <div key={item.label}>
                   <span style={{ color: MUTED, fontSize: "0.68rem" }}>{item.label}</span>
@@ -294,14 +294,14 @@ export default function PsiHeatmapFigure() {
               ))}
             </div>
             <p style={{ color: TEXT_DIM, fontSize: "0.77rem", lineHeight: 1.5, margin: 0 }}>
-              {activePsi.ψ > 0
+              {activePsi ? (activePsi.ψ > 0
                 ? `Above θ_I — intersection activation is live. Ψ = ${activePsi.ψ.toFixed(3)} (multiplicative) vs ${activePsi.ψAdditive.toFixed(3)} (additive). ${
                     activePsi.ψAdditive > 0
                       ? `The multiplicative model predicts ${((activePsi.ψ / activePsi.ψAdditive - 1) * 100).toFixed(0)}% ${activePsi.ψ > activePsi.ψAdditive ? "more" : "less"} cross-domain benefit than the additive baseline.`
                       : "The additive baseline would predict zero benefit here; the multiplicative model differs."
                   }`
                 : `Below θ_I — Ψ = 0 regardless of φ(d₁, d₂). σ₁ × σ₂ = ${(activePsi.σ1 * activePsi.σ2).toFixed(3)} < θ_I = ${THETA_I.toFixed(2)}. At least one domain must cross σ_critical before cross-domain training produces above-additive benefit.`
-              }
+              ) : "Hover any cell to inspect Ψ values."}
             </p>
           </>
         ) : (

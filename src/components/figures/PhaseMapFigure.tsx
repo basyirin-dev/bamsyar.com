@@ -3,22 +3,24 @@
 // Hydration: client:visible
 
 import { useState, useRef, useCallback } from "react";
+import { COLORS, CANVAS, THRESHOLDS } from "./tokens";
 
 // ── Design tokens ────────────────────────────────────────────────────
-const SURFACE    = "#111111";
-const RAISED     = "#1a1a1a";
-const BORDER     = "#2a2a2a";
-const ACCENT     = "#a78bfa";   // violet-400
-const SECONDARY  = "#93c5fd";   // blue-300
-const EMERALD    = "#34d399";
-const AMBER      = "#fbbf24";
-const MUTED      = "#525252";
-const TEXT_MAIN  = "#e5e5e5";
-const TEXT_DIM   = "#a3a3a3";
+const {
+  SURFACE,
+  RAISED,
+  BORDER,
+  ACCENT,
+  SECONDARY,
+  EMERALD,
+  AMBER,
+  MUTED,
+  TEXT_MAIN,
+  TEXT_DIM,
+} = COLORS;
 
 // ── Thresholds (normalised 0–1) ───────────────────────────────────────
-const δc = 0.62;   // δ_critical
-const σc = 0.45;   // σ_critical
+const { DELTA_CRITICAL: δc, SIGMA_CRITICAL: σc } = THRESHOLDS;
 
 // ── Phase logic ───────────────────────────────────────────────────────
 type Phase = 0 | 1 | 2 | 3 | 4 | 5;
@@ -72,9 +74,8 @@ const PHASE_META: Record<Phase, { label: string; color: string; prescription: st
 };
 
 // ── Canvas dimensions ─────────────────────────────────────────────────
-const W = 400;
-const H = 360;
-const PAD = { top: 20, right: 20, bottom: 50, left: 50 };
+const { W, H } = CANVAS.STANDARD;
+const PAD = CANVAS.STANDARD_PAD;
 const CW = W - PAD.left - PAD.right;  // canvas width
 const CH = H - PAD.top  - PAD.bottom; // canvas height
 

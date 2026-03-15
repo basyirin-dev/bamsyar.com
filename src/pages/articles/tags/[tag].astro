@@ -34,7 +34,7 @@ const pageDescription = `Articles tagged with "${tag}". ${articles.length} artic
 
   <div class="mb-8">
     <div class="flex items-center gap-4 mb-4">
-      <a href="/articles" class="text-[#a78bfa] hover:text-white transition-colors duration-150 text-sm">
+      <a href="/articles" class="text-[#a78bfa] hover:text-white transition-colors duration-150 text-sm font-medium">
         ← All articles
       </a>
     </div>
@@ -45,10 +45,7 @@ const pageDescription = `Articles tagged with "${tag}". ${articles.length} artic
   </div>
 
   {allTags.length > 0 && (
-    <div class="mb-8 flex flex-wrap gap-2" id="tag-filter">
-      <a href="/articles" class="tag-btn text-[11px] uppercase tracking-wider px-2.5 py-1 rounded border transition-colors duration-150 border-[#262626] text-[#525252] hover:text-[#a3a3a3] hover:border-[#404040]">
-        All
-      </a>
+    <div class="mb-8 flex flex-wrap gap-2">
       {allTags.map(t => (
         <a
           href={`/articles/tags/${t}`}
@@ -114,7 +111,7 @@ const pageDescription = `Articles tagged with "${tag}". ${articles.length} artic
       <p class="text-[#525252] text-sm mb-4">
         No articles found with the tag "{tag}".
       </p>
-      <a href="/articles" class="text-[#a78bfa] hover:text-white transition-colors duration-150 text-sm">
+      <a href="/articles" class="text-[#a78bfa] hover:text-white transition-colors duration-150 text-sm font-medium">
         Browse all articles
       </a>
     </div>

@@ -9,6 +9,24 @@ import rehypeSlug from 'rehype-slug';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import { site } from './src/config';
 
+// Custom rehype plugin to add loading="lazy" to all img elements
+function rehypeLazyImages() {
+  return function (tree: any) {
+    function visitor(node: any) {
+      if (node.type === 'element' && node.tagName === 'img') {
+        if (!node.properties) node.properties = {};
+        if (!('loading' in node.properties)) {
+          node.properties.loading = 'lazy';
+        }
+      }
+      if (node.children) {
+        node.children.forEach(visitor);
+      }
+    }
+    visitor(tree);
+  };
+}
+
 export default defineConfig({
   /*
     The canonical site URL. Must be set for:
@@ -81,6 +99,14 @@ export default defineConfig({
           ariaLabel: 'Link to section',
         },
       }],
+
+      /*
+        rehype-lazy-images adds loading="lazy" to all img elements
+        produced by the Markdown renderer. This ensures figures below
+        the fold do not compete with critical resources like fonts
+        and stylesheets during initial page load.
+      */
+      rehypeLazyImages,
 
       /*
         rehype-katex v7 (matching package.json: "rehype-katex": "^7.0.1")

@@ -9,7 +9,6 @@
  */
 
 import '../styles/global.css';
-import 'katex/dist/katex.min.css';
 import { site } from '../config';
 
 interface Props {
@@ -207,12 +206,13 @@ const jsonLdPerson = !article ? JSON.stringify({
     <script type="application/ld+json" set:html={jsonLdPerson} />
   )}
 
-  <!-- ── Fonts (Local @fontsource/inter) ────────────────────────── -->
+  <!-- ── Fonts (Self-hosted via @fontsource) ──────────────────────── -->
   <!--
-    Inter font loaded locally via @fontsource/inter package.
-    This eliminates duplicate font loading and ensures consistency
-    between web fonts and Open Graph image generation.
+    Preload the critical Inter Regular (weight 400) .woff2 file.
+    This eliminates one full network round trip from the critical rendering path
+    by starting the font download immediately, in parallel with stylesheet parsing.
   -->
+  <link rel="preload" href="/fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
 
   <!-- ── Favicon ─────────────────────────────────────────────────── -->
   <!--

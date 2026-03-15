@@ -4,24 +4,25 @@
 // Hydration: client:visible
 
 import { useState } from "react";
+import { COLORS, CANVAS } from "./tokens";
 
-// ── Design tokens ────────────────────────────────────────────────────
-const SURFACE   = "#111111";
-const RAISED    = "#1a1a1a";
-const BORDER    = "#2a2a2a";
-const ACCENT    = "#a78bfa";
-const SECONDARY = "#93c5fd";
-const EMERALD   = "#34d399";
-const ROSE      = "#f87171";
-const AMBER     = "#fbbf24";
-const MUTED     = "#525252";
-const TEXT_MAIN = "#e5e5e5";
-const TEXT_DIM  = "#a3a3a3";
+// Destructure colors for backward compatibility
+const {
+  SURFACE,
+  BORDER,
+  ACCENT,
+  SECONDARY,
+  EMERALD,
+  ROSE,
+  AMBER,
+  MUTED,
+  TEXT_MAIN,
+  TEXT_DIM,
+} = COLORS;
 
 // ── Canvas ────────────────────────────────────────────────────────────
-const W   = 480;
-const H   = 220;
-const PAD = { top: 24, right: 20, bottom: 46, left: 20 };
+const { W, H } = CANVAS.WIDE;
+const PAD = CANVAS.WIDE_PAD;
 const CW  = W - PAD.left - PAD.right;
 const CH  = H - PAD.top  - PAD.bottom;
 

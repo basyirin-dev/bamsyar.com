@@ -10,10 +10,10 @@ import { resolve } from 'node:path';
 
 // ── Font loading ───────────────────────────────────────────────────────
 const INTER_REGULAR = readFileSync(
-  resolve('./node_modules/@fontsource/inter/files/inter-latin-400-normal.woff')
+  resolve('./node_modules/@fontsource/inter/files/inter-latin-400-normal.woff2')
 );
 const INTER_BOLD = readFileSync(
-  resolve('./node_modules/@fontsource/inter/files/inter-latin-700-normal.woff')
+  resolve('./node_modules/@fontsource/inter/files/inter-latin-700-normal.woff2')
 );
 
 const OG_WIDTH  = 1200;
