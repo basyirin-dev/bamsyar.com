@@ -122,3 +122,63 @@ tmp/
 temp/
 *.tmp
 *.temp
+
+# Research-specific ignores
+research/data/
+research/*.ipynb
+research/*.csv
+research/*.json
+research/*.pdf
+research/*.png
+research/*.jpg
+research/*.svg
+
+# Jupyter notebooks
+.ipynb_checkpoints/
+
+# Python virtual environments
+venv/
+env/
+*.pyc
+__pycache__/
+
+# R data and packages
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+.Rproj
+
+# MATLAB files
+*.mat
+*.fig
+*.mex*
+
+# LaTeX auxiliary files
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.synctex.gz
+*.toc
+
+# Design assets (keep in assets/ but ignore large files)
+assets/*.psd
+assets/*.ai
+assets/*.sketch
+assets/*.fig
+
+# Large datasets and models
+*.h5
+*.hdf5
+*.pth
+*.pt
+*.bin
+*.model
+
+# Temporary research files
+research/temp/
+research/tmp/
+research/*.tmp

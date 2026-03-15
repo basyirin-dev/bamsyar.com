@@ -4,11 +4,22 @@ Personal research site and blog showcasing academic work and technical writing. 
 
 **Live site**: https://bamsyar.pages.dev
 
+## 🎓 Research Focus
+
+This site serves as a platform for sharing research on:
+
+- **Schema Coherence in AI Training** - The H-Bar Model framework
+- **Physics-Informed Machine Learning** - PIRL (Physics-Informed Residual Learning)
+- **Compositional Generalization** - Formal models of agent knowledge development
+- **AI Curriculum Design** - Structured approaches to training AI systems
+
 ## 🚀 Features
 
 - **Blazing Fast**: Astro 5 with partial hydration for optimal performance
 - **Beautiful Typography**: Tailwind CSS v4 with @tailwindcss/typography
 - **Mathematical Content**: Full LaTeX support with remark-math + rehype-katex
+- **Interactive Research**: Embedded React components for data visualization
+- **Academic Standards**: Proper citation support and BibTeX generation
 - **Responsive Design**: Mobile-first approach with modern CSS
 - **SEO Optimized**: Built-in sitemap generation and semantic HTML
 - **Fast Deployment**: Cloudflare Pages with automatic deployments
@@ -21,6 +32,7 @@ Personal research site and blog showcasing academic work and technical writing. 
 - **Typography**: Custom font stack with Inter and IBM Plex Mono
 - **Deployment**: [Cloudflare Pages](https://pages.cloudflare.com) - Auto-deploy from main branch
 - **Package Manager**: npm
+- **Content**: Astro Content Collections with Zod validation
 
 ## 📦 Installation
 
@@ -63,27 +75,50 @@ The site will be available at `http://localhost:4321`
 ### Project Structure
 
 ```
-src/
-├── components/          # Reusable Astro components
-├── content/            # Markdown content (articles, papers, projects)
-├── layouts/            # Layout components
-├── pages/              # Route definitions
-├── styles/             # Global styles
-└── lib/                # Utility functions
-
-public/
-├── fonts/              # Font files (auto-copied)
-├── figures/            # SVG illustrations
-└── og-default.png      # Default Open Graph image
+bamsyar.com/
+├── src/                    # Source code
+│   ├── components/         # React/Astro components
+│   ├── content/           # Research content
+│   │   ├── articles/      # Blog-style articles (.mdx)
+│   │   ├── papers/        # Academic papers (.md)
+│   │   └── projects/      # Research projects (.md)
+│   ├── layouts/           # Page layouts
+│   ├── lib/               # Utilities and helpers
+│   ├── pages/             # Route definitions
+│   ├── styles/            # CSS and styling
+│   ├── types/             # TypeScript type definitions
+│   └── config/            # Configuration files
+├── scripts/               # Build and utility scripts
+├── public/                # Static assets
+│   ├── fonts/             # Font files
+│   ├── figures/           # SVG illustrations
+│   └── og/                # Open Graph images
+├── docs/                  # Documentation
+├── research/              # Raw research materials
+└── assets/                # Design assets
 ```
 
 ### Content Management
 
 Content is managed through Markdown files in `src/content/`:
 
-- **Articles**: `src/content/articles/` - Blog posts and articles
-- **Papers**: `src/content/papers/` - Academic papers
-- **Projects**: `src/content/projects/` - Project descriptions
+#### Articles (`src/content/articles/`)
+- Blog-style long-form articles
+- Use `.mdx` format for React component embedding
+- Include interactive figures and callouts
+- Frontmatter fields: title, description, publishDate, tags, arxivId, etc.
+
+#### Papers (`src/content/papers/`)
+- Formal academic papers
+- Use `.md` format (portable outside Astro)
+- Include metadata: authors, venue, status, abstract, DOI, etc.
+- BibTeX citations for academic referencing
+
+#### Projects (`src/content/projects/`)
+- Active research projects and initiatives
+- Use `.md` format
+- Link to related papers and external resources
+- Status tracking and timeline information
 
 ### Font Management
 
@@ -96,6 +131,50 @@ To manually copy fonts:
 ```bash
 npm run copy-fonts
 ```
+
+### Adding New Content
+
+#### New Article
+1. Create a new `.mdx` file in `src/content/articles/`
+2. Add frontmatter with required fields:
+   ```markdown
+   ---
+   title: "Your Article Title"
+   description: "Brief description"
+   publishDate: 2026-03-20
+   tags: ["AI Training", "Schema Coherence"]
+   ---
+   ```
+3. Write your content using Markdown and JSX components
+
+#### New Paper
+1. Create a new `.md` file in `src/content/papers/`
+2. Add frontmatter with required fields:
+   ```markdown
+   ---
+   title: "Paper Title"
+   authors: ["Your Name"]
+   year: 2026
+   status: in-progress
+   abstract: "Paper abstract"
+   tags: ["H-Bar Model", "Formal Methods"]
+   ---
+   ```
+3. Write the paper details in Markdown
+
+#### New Project
+1. Create a new `.md` file in `src/content/projects/`
+2. Add frontmatter with required fields:
+   ```markdown
+   ---
+   title: "Project Name"
+   status: in-progress
+   description: "Project description"
+   details: "Detailed project narrative"
+   tags: ["PIRL", "Physics-Informed Learning"]
+   ---
+   ```
+3. Write the project details in Markdown
 
 ## 🚀 Deployment
 
@@ -129,6 +208,14 @@ Contributions are welcome! Please follow these steps:
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
+### Content Guidelines
+
+- Use proper academic formatting for papers
+- Include relevant tags for discoverability
+- Add BibTeX citations for formal papers
+- Use interactive components for data visualization
+- Follow the established frontmatter schema
+
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
@@ -142,3 +229,24 @@ For questions or collaboration, please reach out through the contact information
 - [Astro Documentation](https://docs.astro.build)
 - [Tailwind CSS Documentation](https://tailwindcss.com/docs)
 - [Cloudflare Pages Documentation](https://developers.cloudflare.com/pages/)
+- [H-Bar Model Research](https://bamsyar.pages.dev/articles/h-bar-model-schema-coherence-ai-training)
+- [PIRL Project](https://bamsyar.pages.dev/projects)
+
+## 📚 Research Materials
+
+Additional research materials, data, and supplementary content can be found in:
+
+- `research/` - Raw research data, notebooks, and supplementary materials
+- `assets/` - Design assets, high-resolution figures, and presentation materials
+- `docs/` - Technical documentation and project guides
+
+## 🏆 Academic Standards
+
+This site follows academic best practices:
+
+- Proper citation formatting with BibTeX support
+- DOI integration for published papers
+- arXiv preprint linking
+- Semantic HTML for accessibility
+- Structured data for search engine optimization
+- Open Graph and Twitter Card meta tags
